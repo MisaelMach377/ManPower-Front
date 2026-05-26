@@ -95,25 +95,54 @@ export default function Sidebar() {
   );
 }
 
+/* =========================================
+   TITULO SECCION (CON INDICADOR DE MARCA)
+========================================= */
 function SectionTitle({ title, style }) {
   return (
-    <p
+    <div
       style={{
-        fontSize: "10px",
-        fontWeight: 700,
-        color: "#94a3b8",
-        letterSpacing: "0.05em",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingRight: "12px",
         marginBottom: "6px",
-        paddingLeft: "14px",
-        textTransform: "uppercase",
         ...style,
       }}
     >
-      {title}
-    </p>
+      <p
+        style={{
+          fontSize: "10px",
+          fontWeight: 700,
+          color: "#94a3b8",
+          letterSpacing: "0.05em",
+          paddingLeft: "14px",
+          textTransform: "uppercase",
+          margin: 0,
+        }}
+      >
+        {title}
+      </p>
+      {/* Mini isotipo de la marca a la derecha, tal cual el diseño */}
+      <span
+        style={{
+          fontSize: "11px",
+          fontWeight: "bold",
+          background: "linear-gradient(135deg, #f27405 0%, #2c8a93 100%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          opacity: 0.8,
+        }}
+      >
+        ✕
+      </span>
+    </div>
   );
 }
 
+/* =========================================
+   SIDEBAR BUTTON (DEGRADADO PREMIUM)
+========================================= */
 function SidebarButton({ icon, label, active = false }) {
   return (
     <button
@@ -121,7 +150,10 @@ function SidebarButton({ icon, label, active = false }) {
         width: "100%",
         height: "40px",
         border: "none",
-        background: active ? "#2c8a93" : "transparent", // Ajustado al turquesa del logo
+        // Aquí ocurre la magia: Mezclamos el Naranja (#f27405) y el Turquesa (#2c8a93) con un ángulo de 135 grados
+        background: active
+          ? "linear-gradient(135deg, #f27405 0%, #2c8a93 75%)"
+          : "transparent",
         borderRadius: "8px",
         display: "flex",
         alignItems: "center",
@@ -132,7 +164,8 @@ function SidebarButton({ icon, label, active = false }) {
         fontSize: "13.5px",
         fontWeight: active ? 600 : 500,
         fontFamily: "inherit",
-        transition: "all 0.15s ease",
+        transition: "all 0.2s ease-in-out",
+        boxShadow: active ? "0 4px 12px rgba(44, 138, 147, 0.25)" : "none",
       }}
       onMouseEnter={(e) => {
         if (!active) {
@@ -148,7 +181,7 @@ function SidebarButton({ icon, label, active = false }) {
       }}
     >
       <span style={{ display: "flex", alignItems: "center" }}>{icon}</span>
-      <span>{label}</span>
+      <span style={{ letterSpacing: "-0.01em" }}>{label}</span>
     </button>
   );
 }

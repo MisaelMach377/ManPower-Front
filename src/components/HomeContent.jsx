@@ -9,6 +9,9 @@ export default function HomeContent() {
         minHeight: "calc(100vh - 58px)",
         boxSizing: "border-box",
         fontFamily: "system-ui, -apple-system, sans-serif",
+        // Aquí está el secreto del render: un degradado de fondo radial/lineal muy suave que da textura premium
+        background:
+          "linear-gradient(135deg, #fffcf7 0%, #f8fafc 40%, #f8fafc 100%)",
       }}
     >
       {/* BADGE SUPERIOR CON EL NARANJA DE TU LOGO */}
@@ -68,6 +71,7 @@ export default function HomeContent() {
         <InfoCard
           title="Experiencia"
           description="10 años liderando el flete marítimo y operaciones en Perú."
+          showBrandIcon
         />
         <InfoCard
           title="Misión"
@@ -90,7 +94,7 @@ export default function HomeContent() {
           border: "1px solid #e2e8f0",
           borderRadius: "16px",
           padding: "32px",
-          boxShadow: "0 4px 18px -4px rgba(15, 23, 42, 0.02)",
+          boxShadow: "0 10px 30px -15px rgba(15, 23, 42, 0.04)",
           display: "grid",
           gridTemplateColumns: "2fr 1fr",
           gap: "40px",
@@ -123,7 +127,10 @@ export default function HomeContent() {
                 fontWeight: 650,
                 color: "#2c8a93",
                 textDecoration: "none",
+                transition: "color 0.15s ease",
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#f27405")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#2c8a93")}
             >
               Ver todo el historial
             </a>
@@ -254,7 +261,7 @@ export default function HomeContent() {
 }
 
 /* COMPONENTES AUXILIARES */
-function InfoCard({ title, description }) {
+function InfoCard({ title, description, showBrandIcon = false }) {
   return (
     <div
       style={{
@@ -265,31 +272,55 @@ function InfoCard({ title, description }) {
         display: "flex",
         flexDirection: "column",
         gap: "12px",
-        transition: "all 0.2s ease",
+        transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
         cursor: "pointer",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.01)",
+        boxShadow: "0 2px 4px rgba(15, 23, 42, 0.01)",
+        position: "relative",
+        overflow: "hidden",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "0 10px 25px -10px rgba(0,0,0,0.06)";
-        e.currentTarget.style.transform = "translateY(-1px)";
-        e.currentTarget.style.borderColor = "#cbd5e1";
+        e.currentTarget.style.boxShadow =
+          "0 20px 25px -5px rgba(44, 138, 147, 0.05)";
+        e.currentTarget.style.transform = "translateY(-2px)";
+        e.currentTarget.style.borderColor = "#2c8a93";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.01)";
+        e.currentTarget.style.boxShadow = "0 2px 4px rgba(15, 23, 42, 0.01)";
         e.currentTarget.style.transform = "translateY(0)";
         e.currentTarget.style.borderColor = "#e2e8f0";
       }}
     >
-      <h3
+      <div
         style={{
-          fontSize: "15px",
-          fontWeight: 700,
-          color: "#0f172a",
-          margin: 0,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        {title}
-      </h3>
+        <h3
+          style={{
+            fontSize: "15px",
+            fontWeight: 700,
+            color: "#0f172a",
+            margin: 0,
+          }}
+        >
+          {title}
+        </h3>
+        {showBrandIcon && (
+          <span
+            style={{
+              fontSize: "14px",
+              fontWeight: "bold",
+              background: "linear-gradient(135deg, #f27405 0%, #2c8a93 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            ✕
+          </span>
+        )}
+      </div>
       <p
         style={{
           fontSize: "13px",
@@ -348,7 +379,7 @@ function QuickLinkCard({ icon, label }) {
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.background = "#ffffff";
-        e.currentTarget.style.borderColor = "#2c8a93"; // Borde turquesa al hacer hover
+        e.currentTarget.style.borderColor = "#2c8a93";
         e.currentTarget.style.boxShadow =
           "0 4px 12px -4px rgba(44, 138, 147, 0.1)";
       }}

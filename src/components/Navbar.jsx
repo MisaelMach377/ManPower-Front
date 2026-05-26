@@ -1,259 +1,223 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  Menu,
-  ChevronDown,
-  Building2,
-  LogOut,
-  User,
-  Settings,
-} from "lucide-react";
+import { Menu, LogOut, ChevronDown, User } from "lucide-react";
 
-export default function Navbar({ onMenuClick, onLogout }) {
-  const [isOpen, setIsOpen] = useState(false);
+// Importa aquí tu imagen de perfil colocando la ruta correcta de tus assets
+import userAvatar from "../assets/WhatsApp Image 2026-05-26 at 4.57.57 PM.jpeg";
+
+export default function Navbar() {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Cerrar el menú si el usuario hace clic fuera de él
+  // Cerrar el dropdown si se hace click fuera de él
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
+        setDropdownOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleLogout = () => {
+    console.log("Cerrando sesión...");
+    // Aquí agregas tu lógica de autenticación (limpiar tokens, cookies, etc.)
+  };
+
   return (
-    <nav
+    <header
       style={{
         height: "58px",
         background: "#ffffff",
-        borderBottom: "1px solid #f1f5f9",
+        borderBottom: "1px solid #e2e8f0",
+        padding: "0 24px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "0 18px",
-        position: "sticky",
-        top: 0,
-        zIndex: 1000,
         boxSizing: "border-box",
-        fontFamily:
-          "Inter, ui-sans-serif, system-ui, -apple-system, sans-serif",
+        fontFamily: "system-ui, -apple-system, sans-serif",
       }}
     >
-      {/* IZQUIERDA */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <button
-          onClick={onMenuClick}
-          style={{
-            width: "38px",
-            height: "38px",
-            borderRadius: "11px",
-            border: "1px solid #f1f5f9",
-            background: "#ffffff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            transition: "all 0.18s ease",
-            color: "#475569",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")}
-          onMouseLeave={(e) => (e.currentTarget.style.background = "#ffffff")}
-        >
-          <Menu size={18} strokeWidth={1.8} />
-        </button>
-      </div>
+      {/* BOTÓN HAMBURGUESA (IZQUIERDA) */}
+      <button
+        style={{
+          background: "transparent",
+          border: "none",
+          cursor: "pointer",
+          color: "#64748b",
+          display: "flex",
+          alignItems: "center",
+          padding: "8px",
+          borderRadius: "6px",
+          transition: "background 0.2s",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = "#f1f5f9")}
+        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+      >
+        <Menu size={20} strokeWidth={2} />
+      </button>
 
-      {/* DERECHA (CONTENEDOR RELATIVO PARA EL DROPDOWN) */}
+      {/* BLOQUE DE USUARIO (DERECHA) */}
       <div style={{ position: "relative" }} ref={dropdownRef}>
-        {/* BOTÓN PERFIL */}
         <div
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => setDropdownOpen(!dropdownOpen)}
           style={{
             display: "flex",
             alignItems: "center",
             gap: "12px",
             cursor: "pointer",
-            padding: "6px 10px",
-            borderRadius: "12px",
-            backgroundColor: isOpen ? "#f8fafc" : "transparent",
-            transition: "all 0.15s ease",
-            userSelect: "none",
+            padding: "4px 8px",
+            borderRadius: "8px",
+            transition: "background 0.2s",
           }}
-          onMouseEnter={(e) => {
-            if (!isOpen) e.currentTarget.style.backgroundColor = "#f8fafc";
-          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")}
           onMouseLeave={(e) => {
-            if (!isOpen) e.currentTarget.style.backgroundColor = "transparent";
+            if (!dropdownOpen) e.currentTarget.style.background = "transparent";
           }}
         >
-          {/* TEXTOS - IGUALADOS A LA REFERENCIA COORPORATIVA */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-              lineHeight: 1.25,
-            }}
-          >
-            <span
+          {/* TEXTOS DEL PERFIL */}
+          <div style={{ textAlign: "right" }}>
+            <p
               style={{
                 fontSize: "13px",
-                fontWeight: 700, // Más fuerte para mantener el estilo limpio y claro
-                color: "#0f172a", // Cambiado a gris pizarra oscuro (estilo SaaS premium)
-                letterSpacing: "-0.01em",
+                fontWeight: 700,
+                color: "#0f172a",
+                margin: 0,
               }}
             >
               Renzo Ramirez de Mumu
-            </span>
-            <span
+            </p>
+            <p
               style={{
-                fontSize: "9.5px",
+                fontSize: "10px",
+                fontWeight: 600,
                 color: "#94a3b8",
-                fontWeight: 700, // Marcado en Bold idéntico a Beta S.A.
                 textTransform: "uppercase",
-                letterSpacing: "0.06em",
+                letterSpacing: "0.02em",
+                margin: 0,
               }}
             >
               Cliente
-            </span>
+            </p>
           </div>
 
-          {/* AVATAR Y FLECHA */}
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {/* AVATAR DE USUARIO (MÁS GRANDE) */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px", // Espacio entre el círculo y la flecha de despliegue
+            }}
+          >
+            {/* Contenedor del círculo del perfil */}
             <div
               style={{
-                width: "34px",
-                height: "34px",
-                borderRadius: "10px",
-                background: "linear-gradient(135deg, #49a5ab 0%, #3b8d93 100%)",
+                width: "42px", // Escalado de 32px a 42px
+                height: "42px", // Escalado de 32px a 42px
+                borderRadius: "50%",
+                overflow: "hidden", // Asegura que la foto no se salga del círculo
+                border: "2px solid #f1f5f9", // Un borde sutil que le da un acabado premium
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                boxShadow: "0 2px 8px rgba(59, 141, 147, 0.15)",
+                background: "#cbd5e1",
               }}
             >
-              <Building2 size={15} color="#ffffff" strokeWidth={1.8} />
+              <img
+                src={userAvatar}
+                alt="Avatar"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover", // Mantiene la proporción de la foto de perfil sin deformarla
+                }}
+              />
             </div>
 
+            {/* Flecha indicadora del dropdown */}
             <ChevronDown
-              size={14}
-              color={isOpen ? "#0f172a" : "#94a3b8"}
-              style={{
-                transition: "transform 0.2s ease, color 0.2s ease",
-                transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-              }}
+              size={15}
+              color="#64748b"
+              style={{ marginTop: "2px" }}
             />
           </div>
         </div>
 
-        {/* =========================================
-            DROPDOWN MENÚ (MINIMALISTA)
-        ========================================= */}
-        {isOpen && (
+        {/* DROPDOWN POPUP FLOTANTE */}
+        {dropdownOpen && (
           <div
             style={{
               position: "absolute",
-              top: "calc(100% + 6px)",
-              right: 0,
-              width: "180px",
+              top: "46px",
+              right: "0",
+              width: "160px",
               background: "#ffffff",
-              border: "1px solid #f1f5f9",
-              borderRadius: "12px",
-              boxShadow:
-                "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)",
-              padding: "6px",
+              border: "1px solid #e2e8f0",
+              borderRadius: "10px",
+              boxShadow: "0 10px 25px -5px rgba(15, 23, 42, 0.08)",
+              padding: "4px",
+              zIndex: 100,
               display: "flex",
               flexDirection: "column",
-              gap: "2px",
-              animation: "fadeIn 0.12s ease-out",
             }}
           >
-            <DropdownItem icon={<User size={15} />} label="Perfil" />
-            <DropdownItem icon={<Settings size={15} />} label="Ajustes" />
-
-            {/* Separador sutil */}
-            <div
-              style={{
-                height: "1px",
-                background: "#f1f5f9",
-                margin: "4px 6px",
-              }}
-            />
-
-            {/* BOTÓN CERRAR SESIÓN */}
             <button
-              onClick={onLogout}
               style={{
-                width: "100%",
-                padding: "8px 10px",
-                borderRadius: "8px",
-                border: "none",
-                background: "transparent",
                 display: "flex",
                 alignItems: "center",
-                gap: "10px",
+                gap: "8px",
+                padding: "10px 12px",
+                background: "transparent",
+                border: "none",
+                borderRadius: "6px",
+                fontSize: "13px",
+                fontWeight: 500,
+                color: "#475569",
                 cursor: "pointer",
-                color: "#ef4444",
-                fontSize: "13.5px",
-                fontWeight: 550,
                 textAlign: "left",
-                transition: "background 0.12s ease",
+                transition: "all 0.15s ease",
               }}
               onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "#fef2f2")
+                (e.currentTarget.style.background = "#f1f5f9")
               }
               onMouseLeave={(e) =>
                 (e.currentTarget.style.background = "transparent")
               }
             >
-              <LogOut size={15} strokeWidth={1.8} />
-              <span>Cerrar sesión</span>
+              <User size={15} />
+              Mi Perfil
+            </button>
+
+            <button
+              onClick={handleLogout}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "10px 12px",
+                background: "transparent",
+                border: "none",
+                borderRadius: "6px",
+                fontSize: "13px",
+                fontWeight: 600,
+                color: "#ef4444", // Rojo sutil de peligro
+                cursor: "pointer",
+                textAlign: "left",
+                transition: "all 0.15s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#fef2f2";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+              }}
+            >
+              <LogOut size={15} />
+              Cerrar sesión
             </button>
           </div>
         )}
       </div>
-    </nav>
-  );
-}
-
-/* =========================================
-   COMPONENTE AUXILIAR PARA ITEMS DEL MENÚ
-========================================= */
-function DropdownItem({ icon, label, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        width: "100%",
-        padding: "8px 10px",
-        borderRadius: "8px",
-        border: "none",
-        background: "transparent",
-        display: "flex",
-        alignItems: "center",
-        gap: "10px",
-        cursor: "pointer",
-        color: "#475569",
-        fontSize: "13.5px",
-        fontWeight: 500,
-        textAlign: "left",
-        transition: "all 0.12s ease",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = "#f1f5f9";
-        e.currentTarget.style.color = "#0f172a";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = "transparent";
-        e.currentTarget.style.color = "#475569";
-      }}
-    >
-      <span style={{ color: "#94a3b8", display: "flex", alignItems: "center" }}>
-        {icon}
-      </span>
-      <span>{label}</span>
-    </button>
+    </header>
   );
 }
