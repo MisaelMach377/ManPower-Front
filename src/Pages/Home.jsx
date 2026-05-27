@@ -1,22 +1,36 @@
 import React from "react";
+import { Outlet } from "react-router-dom";
+
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/SideBar";
-import HomeContent from "../components/HomeContent"; // Importamos el contenido limpio con la tabla y tarjetas
+import HomeContent from "../components/HomeContent";
 
 export default function Home() {
   return (
-    <div style={{ display: "flex", background: "#f8fafc", minHeight: "100vh" }}>
-      {/* BARRA LATERAL */}
+    <div
+      style={{
+        display: "flex",
+        background: "#f8fafc",
+        minHeight: "100vh",
+      }}
+    >
+      {/* SIDEBAR */}
       <Sidebar />
 
-      {/* CONTENEDOR PRINCIPAL */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        {/* BARRA SUPERIOR */}
+      {/* CONTENIDO */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {/* NAVBAR */}
         <Navbar />
 
-        {/* ZONA DE CONTENIDO DINÁMICO */}
+        {/* CONTENIDO DINÁMICO */}
         <div style={{ flex: 1 }}>
-          <HomeContent />
+          <Outlet />
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -14,6 +15,8 @@ import {
 import logo from "../assets/Logo-MANPOWER_sinfondo.png";
 
 export default function Sidebar() {
+  const navigate = useNavigate();
+
   return (
     <aside
       style={{
@@ -49,14 +52,18 @@ export default function Sidebar() {
       {/* MENÚ */}
       <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
         <SectionTitle title="Módulos" />
+
         <SidebarButton
           icon={<LayoutDashboard size={17} strokeWidth={1.8} />}
           label="Dashboard"
           active
+          onClick={() => navigate("/")}
         />
+
         <SidebarButton
           icon={<Users size={17} strokeWidth={1.8} />}
           label="Usuarios"
+          onClick={() => navigate("/usuarios")}
         />
 
         <SectionTitle title="Inventario" style={{ marginTop: "16px" }} />
@@ -143,9 +150,10 @@ function SectionTitle({ title, style }) {
 /* =========================================
    SIDEBAR BUTTON (DEGRADADO PREMIUM)
 ========================================= */
-function SidebarButton({ icon, label, active = false }) {
+function SidebarButton({ icon, label, active = false, onClick }) {
   return (
     <button
+      onClick={onClick}
       style={{
         width: "100%",
         height: "40px",
