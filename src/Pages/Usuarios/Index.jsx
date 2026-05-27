@@ -11,7 +11,7 @@ export default function Usuarios() {
     try {
       const response = await fetch("https://localhost:44382/api/UsuariosApi", {
         method: "GET",
-        credentials: "include",
+
         headers: {
           "Content-Type": "application/json",
         },

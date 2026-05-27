@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -16,6 +16,7 @@ import logo from "../assets/Logo-MANPOWER_sinfondo.png";
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <aside
@@ -56,46 +57,68 @@ export default function Sidebar() {
         <SidebarButton
           icon={<LayoutDashboard size={17} strokeWidth={1.8} />}
           label="Dashboard"
-          active
+          active={location.pathname === "/"}
           onClick={() => navigate("/")}
         />
 
         <SidebarButton
           icon={<Users size={17} strokeWidth={1.8} />}
           label="Usuarios"
+          active={location.pathname === "/usuarios"}
           onClick={() => navigate("/usuarios")}
         />
 
         <SectionTitle title="Inventario" style={{ marginTop: "16px" }} />
+
         <SidebarButton
           icon={<Wrench size={17} strokeWidth={1.8} />}
           label="Herramientas"
+          active={location.pathname === "/herramientas"}
+          onClick={() => navigate("/herramientas")}
         />
+
         <SidebarButton
           icon={<Smartphone size={17} strokeWidth={1.8} />}
           label="Celulares"
+          active={location.pathname === "/celulares"}
+          onClick={() => navigate("/celulares")}
         />
+
         <SidebarButton
           icon={<Laptop size={17} strokeWidth={1.8} />}
           label="Laptops"
+          active={location.pathname === "/laptops"}
+          onClick={() => navigate("/laptops")}
         />
 
         <SectionTitle title="Operaciones" style={{ marginTop: "16px" }} />
+
         <SidebarButton
           icon={<ClipboardCheck size={17} strokeWidth={1.8} />}
           label="Asignación"
+          active={location.pathname === "/asignacion"}
+          onClick={() => navigate("/asignacion")}
         />
+
         <SidebarButton
           icon={<RotateCcw size={17} strokeWidth={1.8} />}
           label="Devolución"
+          active={location.pathname === "/devolucion"}
+          onClick={() => navigate("/devolucion")}
         />
+
         <SidebarButton
           icon={<History size={17} strokeWidth={1.8} />}
           label="Historial"
+          active={location.pathname === "/historial"}
+          onClick={() => navigate("/historial")}
         />
+
         <SidebarButton
           icon={<Layers3 size={17} strokeWidth={1.8} />}
           label="Categorías"
+          active={location.pathname === "/categorias"}
+          onClick={() => navigate("/categorias")}
         />
       </div>
     </aside>
