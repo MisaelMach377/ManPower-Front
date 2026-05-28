@@ -163,9 +163,7 @@ function SectionTitle({ title, style }) {
           WebkitTextFillColor: "transparent",
           opacity: 0.8,
         }}
-      >
-        ✕
-      </span>
+      ></span>
     </div>
   );
 }
