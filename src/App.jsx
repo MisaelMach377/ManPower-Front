@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import HomeContent from "./components/HomeContent";
 
 import Usuarios from "./Pages/Usuarios/Index";
+import Herramientas from "./Pages/Herramientas/Index";
 
 function App() {
   return (
@@ -16,6 +17,9 @@ function App() {
 
         {/* USUARIOS */}
         <Route path="usuarios" element={<Usuarios />} />
+
+        {/* HERRAMIENTAS */}
+        <Route path="herramientas" element={<Herramientas />} />
       </Route>
     </Routes>
   );
