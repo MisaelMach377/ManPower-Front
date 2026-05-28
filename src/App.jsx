@@ -7,6 +7,7 @@ import HomeContent from "./components/HomeContent";
 import Usuarios from "./Pages/Usuarios/Index";
 import Herramientas from "./Pages/Herramientas/Index";
 import Celulares from "./Pages/Celulares/Index";
+import Laptops from "./Pages/Laptops/Index";
 
 function App() {
   return (
@@ -24,6 +25,9 @@ function App() {
 
         {/* CELULARES */}
         <Route path="celulares" element={<Celulares />} />
+
+        {/* LAPTOPS */}
+        <Route path="laptops" element={<Laptops />} />
       </Route>
     </Routes>
   );
