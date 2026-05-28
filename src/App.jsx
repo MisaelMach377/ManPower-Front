@@ -6,6 +6,7 @@ import HomeContent from "./components/HomeContent";
 
 import Usuarios from "./Pages/Usuarios/Index";
 import Herramientas from "./Pages/Herramientas/Index";
+import Celulares from "./Pages/Celulares/Index";
 
 function App() {
   return (
@@ -20,6 +21,9 @@ function App() {
 
         {/* HERRAMIENTAS */}
         <Route path="herramientas" element={<Herramientas />} />
+
+        {/* CELULARES */}
+        <Route path="celulares" element={<Celulares />} />
       </Route>
     </Routes>
   );
