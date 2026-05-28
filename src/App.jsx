@@ -8,6 +8,7 @@ import Usuarios from "./Pages/Usuarios/Index";
 import Herramientas from "./Pages/Herramientas/Index";
 import Celulares from "./Pages/Celulares/Index";
 import Laptops from "./Pages/Laptops/Index";
+import Asignaciones from "./Pages/Asignaciones/Index";
 
 function App() {
   return (
@@ -28,6 +29,9 @@ function App() {
 
         {/* LAPTOPS */}
         <Route path="laptops" element={<Laptops />} />
+
+        {/* ASIGNACIONES */}
+        <Route path="asignacion" element={<Asignaciones />} />
       </Route>
     </Routes>
   );
