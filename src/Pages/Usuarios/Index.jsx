@@ -1,12 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Search, Hash } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Search,
+  Hash,
+  FileSpreadsheet,
+} from "lucide-react";
 import CrearUsuario from "./CrearUsuario";
+import EditarUsuario from "./EditarUsuario";
+import EliminarUsuario from "./EliminarUsuario";
 
 export default function Usuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [hoverBtn, setHoverBtn] = useState(false);
+  const [hoverExcel, setHoverExcel] = useState(false); // Estado para el hover minimalista
   //MODAL
   const [openModal, setOpenModal] = useState(false);
+  //ABRIR EDITAR USUARIO
+  const [openEdit, setOpenEdit] = useState(false);
+  const [usuarioEdit, setUsuarioEdit] = useState(null);
+  //ABRIR ELIMINAR USUARIO
+  const [openDelete, setOpenDelete] = useState(false);
+  const [usuarioDelete, setUsuarioDelete] = useState(null);
   //Buscadores
   const [fApellido, setFApellido] = useState("");
   const [fDoc, setFDoc] = useState("");
@@ -15,6 +31,7 @@ export default function Usuarios() {
     obtenerUsuarios();
   }, []);
 
+  //OBTENER USUARIOS
   const obtenerUsuarios = async () => {
     try {
       const res = await fetch("https://localhost:44382/api/UsuariosApi");
@@ -25,6 +42,7 @@ export default function Usuarios() {
     }
   };
 
+  //FORMATEAR FECHA
   const formatDate = (date) => {
     if (!date) return "-";
     const d = new Date(date);
@@ -34,6 +52,7 @@ export default function Usuarios() {
     return `${day}/${month}/${year}`;
   };
 
+  //FILTRAR USUARIOS
   const filtrados = usuarios.filter((u) => {
     return (
       u.apellido?.toLowerCase().includes(fApellido.toLowerCase()) &&
@@ -41,10 +60,19 @@ export default function Usuarios() {
     );
   });
 
+  //EXPORTAR EXCEL
+  const exportarExcel = () => {
+    window.open(
+      "https://localhost:44382/api/UsuariosApi/export/excel",
+      "_blank",
+    );
+  };
+
+  // --- ESTILOS EN OBJETOS ---
   const page = {
     minHeight: "100vh",
     padding: "28px",
-    background: "#f4f6fb",
+    background: "#f8fafc", // Un gris más limpio y moderno
     fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif",
   };
 
@@ -55,31 +83,32 @@ export default function Usuarios() {
 
   const card = {
     background: "#fff",
-    borderRadius: "18px",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-    border: "1px solid #eef2f7",
+    borderRadius: "12px", // Bordes un poco más finos son más pro
+    boxShadow:
+      "0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05)", // Sombra sutil de diseño moderno
+    border: "1px solid #e2e8f0",
     overflow: "hidden",
   };
 
   const header = {
     padding: "18px 20px",
-    borderBottom: "1px solid #eef2f7",
+    borderBottom: "1px solid #e2e8f0",
     display: "flex",
-    justifyContent: "space-between",
+    justify: "space-between",
     alignItems: "center",
   };
 
   const title = {
-    fontSize: "20px",
-    fontWeight: "700",
+    fontSize: "18px",
+    fontWeight: "600",
     color: "#0f172a",
   };
 
   const filtersBar = {
     display: "flex",
-    justifyContent: "space-between",
+    justify: "space-between",
     padding: "14px 20px",
-    borderBottom: "1px solid #eef2f7",
+    borderBottom: "1px solid #e2e8f0",
     background: "#fff",
     alignItems: "center",
   };
@@ -91,66 +120,70 @@ export default function Usuarios() {
   };
 
   const input = {
-    padding: "10px 12px 10px 36px",
-    borderRadius: "10px",
+    padding: "8px 12px 8px 36px",
+    borderRadius: "8px",
     border: "1px solid #e2e8f0",
     fontSize: "13px",
     outline: "none",
     minWidth: "200px",
     background: "#fff",
+    color: "#334155",
   };
 
   const iconInside = {
     position: "absolute",
-    left: "10px",
+    left: "12px",
     color: "#94a3b8",
     pointerEvents: "none",
   };
 
+  // BOTÓN EXCEL MINIMALISTA Y PRO
+  const btnExcel = {
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+    padding: "8px 12px",
+    borderRadius: "8px",
+    border: "1px solid #e2e8f0",
+    background: hoverExcel ? "#f1f5f9" : "#fff",
+    color: "#334155",
+    fontWeight: "500",
+    fontSize: "13px",
+    cursor: "pointer",
+    transition: "all 0.15s ease",
+  };
+
   const table = {
     width: "100%",
-    borderCollapse: "separate",
-    borderSpacing: "0 6px",
+    borderCollapse: "collapse",
     padding: "10px",
   };
 
   const th = {
     textAlign: "left",
     fontSize: "11px",
-    color: "#94a3b8",
+    fontWeight: "600",
+    color: "#64748b",
     padding: "12px",
     textTransform: "uppercase",
+    letterSpacing: "0.05em",
+    borderBottom: "1px solid #e2e8f0",
   };
 
   const td = {
     padding: "12px",
     fontSize: "13px",
     color: "#334155",
-    background: "#fff",
-  };
-
-  const btnCreate = {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    padding: "10px 14px",
-    borderRadius: "10px",
-    border: "1px solid #e2e8f0",
-    background: "#fff",
-    color: "#0f172a",
-    fontWeight: "600",
-    fontSize: "13px",
-    cursor: "pointer",
-    transition: "all 0.2s ease",
+    borderBottom: "1px solid #f1f5f9",
   };
 
   const badge = (active) => ({
-    padding: "4px 10px",
-    borderRadius: "999px",
+    padding: "2px 8px",
+    borderRadius: "6px",
     fontSize: "12px",
-    fontWeight: "600",
-    background: active ? "#dcfce7" : "#fee2e2",
-    color: active ? "#166534" : "#991b1b",
+    fontWeight: "500",
+    background: active ? "#f0fdf4" : "#fef2f2",
+    color: active ? "#16a34a" : "#dc2626",
   });
 
   const iconBtn = {
@@ -158,10 +191,11 @@ export default function Usuarios() {
     background: "transparent",
     cursor: "pointer",
     padding: "6px",
-    borderRadius: "8px",
+    borderRadius: "6px",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justify: "center",
+    transition: "background 0.2s",
   };
 
   return (
@@ -175,30 +209,44 @@ export default function Usuarios() {
 
           {/* FILTERS */}
           <div style={filtersBar}>
-            {/* IZQUIERDA (filtros) */}
-            <div style={{ display: "flex", gap: "10px" }}>
+            {/* IZQUIERDA (filtros + excel) */}
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
               <div style={inputWrapper}>
-                <Search size={16} style={iconInside} />
+                <Search size={15} style={iconInside} />
                 <input
                   style={input}
-                  placeholder="Ingresa un Apellido"
+                  placeholder="Buscar por apellido..."
                   value={fApellido}
                   onChange={(e) => setFApellido(e.target.value)}
                 />
               </div>
-
               <div style={inputWrapper}>
-                <Hash size={16} style={iconInside} />
+                <Hash size={15} style={iconInside} />
                 <input
                   style={input}
-                  placeholder="Numero de Documento"
+                  placeholder="Documento..."
                   value={fDoc}
                   onChange={(e) => setFDoc(e.target.value)}
                 />
               </div>
+
+              {/* BOTÓN EXCEL MODIFICADO */}
+              <button
+                onClick={exportarExcel}
+                onMouseEnter={() => setHoverExcel(true)}
+                onMouseLeave={() => setHoverExcel(false)}
+                style={btnExcel}
+              >
+                <FileSpreadsheet
+                  size={15}
+                  strokeWidth={2}
+                  style={{ color: "#16a34a" }}
+                />
+                <span>Exportar</span>
+              </button>
             </div>
 
-            {/* DERECHA (botón) */}
+            {/* DERECHA (botón crear) */}
             <button
               onClick={() => setOpenModal(true)}
               onMouseEnter={() => setHoverBtn(true)}
@@ -206,27 +254,26 @@ export default function Usuarios() {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "8px",
-                padding: "10px 14px",
-                borderRadius: "10px",
-                border: hoverBtn ? "1px solid #cbd5e1" : "1px solid #e2e8f0",
-                background: hoverBtn ? "#f8fafc" : "#fff",
-                color: "#0f172a",
-                fontWeight: "600",
+                gap: "6px",
+                padding: "8px 12px",
+                borderRadius: "8px",
+                border: "none",
+                background: hoverBtn ? "#0f172a" : "#1e293b",
+                color: "#fff",
+                fontWeight: "500",
                 fontSize: "13px",
                 cursor: "pointer",
-                transform: hoverBtn ? "translateY(-1px)" : "translateY(0)",
-                transition: "all 0.2s ease",
+                transition: "all 0.15s ease",
                 marginLeft: "auto",
               }}
             >
-              <Plus size={16} />
+              <Plus size={15} />
               Nuevo Usuario
             </button>
           </div>
 
           {/* TABLE */}
-          <div style={{ padding: "10px" }}>
+          <div style={{ padding: "0 10px" }}>
             <table style={table}>
               <thead>
                 <tr>
@@ -261,29 +308,37 @@ export default function Usuarios() {
                     <td style={td}>{formatDate(u.fechaCreacion)}</td>
 
                     {/* ACCIONES */}
-                    <td style={{ ...td, display: "flex", gap: "6px" }}>
+                    <td style={{ ...td, display: "flex", gap: "4px" }}>
                       <button
                         style={iconBtn}
+                        onClick={() => {
+                          setUsuarioEdit(u);
+                          setOpenEdit(true);
+                        }}
                         onMouseOver={(e) =>
-                          (e.currentTarget.style.background = "#e0f2fe")
+                          (e.currentTarget.style.background = "#f1f5f9")
                         }
                         onMouseOut={(e) =>
                           (e.currentTarget.style.background = "transparent")
                         }
                       >
-                        <Pencil size={16} color="#2563eb" />
+                        <Pencil size={15} color="#475569" />
                       </button>
 
                       <button
                         style={iconBtn}
+                        onClick={() => {
+                          setUsuarioDelete(u);
+                          setOpenDelete(true);
+                        }}
                         onMouseOver={(e) =>
-                          (e.currentTarget.style.background = "#fee2e2")
+                          (e.currentTarget.style.background = "#fef2f2")
                         }
                         onMouseOut={(e) =>
                           (e.currentTarget.style.background = "transparent")
                         }
                       >
-                        <Trash2 size={16} color="#dc2626" />
+                        <Trash2 size={15} color="#dc2626" />
                       </button>
                     </td>
                   </tr>
@@ -295,6 +350,20 @@ export default function Usuarios() {
               open={openModal}
               onClose={() => setOpenModal(false)}
               onCreated={obtenerUsuarios}
+            />
+
+            <EditarUsuario
+              open={openEdit}
+              onClose={() => setOpenEdit(false)}
+              usuario={usuarioEdit}
+              onUpdated={obtenerUsuarios}
+            />
+
+            <EliminarUsuario
+              open={openDelete}
+              onClose={() => setOpenDelete(false)}
+              usuario={usuarioDelete}
+              onDeleted={obtenerUsuarios}
             />
           </div>
         </div>
