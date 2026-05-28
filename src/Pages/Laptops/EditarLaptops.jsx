@@ -1,5 +1,4 @@
 import { X, Laptop, Hash, Building2, ShieldCheck, Package } from "lucide-react";
-
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -55,23 +54,42 @@ export default function EditarLaptop({ open, onClose, laptop, onUpdated }) {
       toast.success("Laptop actualizada 🔥");
       onUpdated();
       onClose();
-    } catch (err) {
+    } catch {
       toast.error("Error del servidor");
     }
   };
 
+  const systemFont =
+    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial';
+
   return (
     <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+      <div
+        style={{ ...modalStyle, fontFamily: systemFont }}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* CLOSE */}
-        <button style={closeBtnStyle} onClick={onClose}>
+        <button
+          style={closeBtnStyle}
+          onClick={onClose}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "#f3f4f6";
+            e.currentTarget.style.color = "#111";
+            e.currentTarget.style.transform = "scale(1.05)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "#999";
+            e.currentTarget.style.transform = "scale(1)";
+          }}
+        >
           <X size={16} />
         </button>
 
         {/* HEADER */}
         <div style={headerStyle}>
-          <h3 style={titleStyle}>Editar Laptop</h3>
-          <p style={subtitleStyle}>Actualiza datos del equipo</p>
+          <h3 style={titleStyle}>Editar laptop</h3>
+          <p style={subtitleStyle}>Actualiza los datos del equipo</p>
         </div>
 
         {/* FORM */}
@@ -113,7 +131,6 @@ export default function EditarLaptop({ open, onClose, laptop, onUpdated }) {
             style={textareaStyle}
           />
 
-          {/* ESTADO */}
           <div style={inputWrapStyle}>
             <div style={iconStyle}>
               <ShieldCheck size={14} />
@@ -139,11 +156,13 @@ export default function EditarLaptop({ open, onClose, laptop, onUpdated }) {
             onClick={onClose}
             style={btnSecondaryStyle}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = "#f1f5f9";
+              e.currentTarget.style.background = "#f3f4f6";
+              e.currentTarget.style.borderColor = "#d1d5db";
               e.currentTarget.style.transform = "scale(1.03)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.borderColor = "#ddd";
               e.currentTarget.style.transform = "scale(1)";
             }}
           >
@@ -261,6 +280,7 @@ const inputStyle = {
   borderRadius: "8px",
   fontSize: "13px",
   outline: "none",
+  boxSizing: "border-box",
 };
 
 const textareaStyle = {
@@ -288,6 +308,7 @@ const btnPrimaryStyle = {
   border: "none",
   padding: "9px 14px",
   borderRadius: "8px",
+  transition: "all 0.15s ease",
 };
 
 const btnSecondaryStyle = {
@@ -295,6 +316,7 @@ const btnSecondaryStyle = {
   border: "1px solid #ddd",
   padding: "9px 14px",
   borderRadius: "8px",
+  transition: "all 0.15s ease",
 };
 
 const closeBtnStyle = {
@@ -304,5 +326,11 @@ const closeBtnStyle = {
   border: "none",
   background: "transparent",
   cursor: "pointer",
+  padding: "6px",
+  borderRadius: "8px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
   color: "#999",
+  transition: "all 0.15s ease",
 };
