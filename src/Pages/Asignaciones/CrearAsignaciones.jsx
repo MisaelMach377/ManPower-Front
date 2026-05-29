@@ -9,6 +9,8 @@ import {
   Wrench,
 } from "lucide-react";
 
+import "./CrearAsignaciones.css";
+
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -25,11 +27,9 @@ export default function CrearAsignacion({
   const [form, setForm] = useState({
     usuarioId: "",
     tipoHerramienta: "CELULAR",
-
     celularId: "",
     laptopId: "",
     herramientaId: "",
-
     numeroGuia: "",
     zona: "",
     estado: "ACTIVO",
@@ -74,18 +74,14 @@ export default function CrearAsignacion({
       const payload = {
         usuarioId: Number(form.usuarioId),
         tipoHerramienta: form.tipoHerramienta,
-
         celularId:
           form.tipoHerramienta === "CELULAR" ? Number(form.celularId) : null,
-
         laptopId:
           form.tipoHerramienta === "LAPTOP" ? Number(form.laptopId) : null,
-
         herramientaId:
           form.tipoHerramienta === "HERRAMIENTA"
             ? Number(form.herramientaId)
             : null,
-
         numeroGuia: form.numeroGuia,
         zona: form.zona,
         estado: form.estado,
@@ -106,7 +102,6 @@ export default function CrearAsignacion({
       }
 
       toast.success("Asignación creada 🔥");
-
       onClose();
       obtenerAsignaciones();
 
@@ -135,18 +130,18 @@ export default function CrearAsignacion({
       (form.tipoHerramienta === "HERRAMIENTA" && form.herramientaId));
 
   return (
-    <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-        <button style={closeBtnStyle} onClick={onClose}>
+    <div className="asignacion-overlay" onClick={onClose}>
+      <div className="asignacion-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="asignacion-close" onClick={onClose}>
           <X size={16} />
         </button>
 
-        <div style={headerStyle}>
-          <h2 style={titleStyle}>Nueva asignación</h2>
-          <p style={subtitleStyle}>Asigna equipos o herramientas</p>
+        <div className="asignacion-header">
+          <h2 className="asignacion-title">Nueva asignación</h2>
+          <p className="asignacion-subtitle">Asigna equipos o herramientas</p>
         </div>
 
-        <div style={formStyle}>
+        <div className="asignacion-form">
           {/* USUARIO */}
           <SelectInput
             icon={<User size={14} />}
@@ -154,7 +149,7 @@ export default function CrearAsignacion({
             value={form.usuarioId}
             onChange={handleChange}
           >
-            <option value="">Usuario</option>
+            <option value="">Selecciona un usuario</option>
             {usuarios.map((u) => (
               <option key={u.id} value={u.id}>
                 {u.nombre} {u.apellido}
@@ -162,8 +157,8 @@ export default function CrearAsignacion({
             ))}
           </SelectInput>
 
-          {/* BOTONES */}
-          <div style={rowStyle}>
+          {/* BOTONES DE TIPO */}
+          <div className="tipo-row">
             <TypeBtn
               active={form.tipoHerramienta === "CELULAR"}
               onClick={() =>
@@ -207,7 +202,7 @@ export default function CrearAsignacion({
             />
           </div>
 
-          {/* SELECTS */}
+          {/* SELECT DINÁMICO SEGÚN TIPO */}
           {form.tipoHerramienta === "CELULAR" && (
             <SelectInput
               icon={<Smartphone size={14} />}
@@ -215,7 +210,7 @@ export default function CrearAsignacion({
               value={form.celularId}
               onChange={handleChange}
             >
-              <option value="">Celular</option>
+              <option value="">Selecciona un celular</option>
               {celulares.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.marca} {c.modelo}
@@ -231,7 +226,7 @@ export default function CrearAsignacion({
               value={form.laptopId}
               onChange={handleChange}
             >
-              <option value="">Laptop</option>
+              <option value="">Selecciona una laptop</option>
               {laptops.map((l) => (
                 <option key={l.id} value={l.id}>
                   {l.marca} {l.modelo}
@@ -247,7 +242,7 @@ export default function CrearAsignacion({
               value={form.herramientaId}
               onChange={handleChange}
             >
-              <option value="">Herramienta</option>
+              <option value="">Selecciona una herramienta</option>
               {herramientas.map((h) => (
                 <option key={h.id} value={h.id}>
                   {h.descripcion}
@@ -256,13 +251,13 @@ export default function CrearAsignacion({
             </SelectInput>
           )}
 
-          {/* INPUTS */}
+          {/* INPUTS DE CONTROL */}
           <Input
             icon={<FileText size={14} />}
             name="numeroGuia"
             value={form.numeroGuia}
             onChange={handleChange}
-            placeholder="Guía"
+            placeholder="Número de Guía"
           />
 
           <Input
@@ -270,33 +265,30 @@ export default function CrearAsignacion({
             name="zona"
             value={form.zona}
             onChange={handleChange}
-            placeholder="Zona"
+            placeholder="Zona / Ubicación"
           />
 
           <textarea
             name="observaciones"
             value={form.observaciones}
             onChange={handleChange}
-            style={textareaStyle}
-            placeholder="Observaciones"
+            className="asignacion-textarea"
+            placeholder="Observaciones adicionales..."
           />
         </div>
 
-        <div style={footerStyle}>
-          <button onClick={onClose} style={btnSecondaryStyle}>
+        <div className="asignacion-footer">
+          <button onClick={onClose} className="btn-cancelar">
             Cancelar
           </button>
 
           <button
             disabled={!isValid}
             onClick={crearAsignacion}
-            style={{
-              ...btnPrimaryStyle,
-              opacity: isValid ? 1 : 0.5,
-            }}
+            className="btn-guardar"
           >
             <ClipboardList size={15} />
-            Crear
+            Crear Asignación
           </button>
         </div>
       </div>
@@ -304,110 +296,35 @@ export default function CrearAsignacion({
   );
 }
 
-/* ================= STYLES ================= */
-
-const overlayStyle = {
-  position: "fixed",
-  inset: 0,
-  background: "rgba(0,0,0,0.2)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 999,
-};
-
-const modalStyle = {
-  width: "100%",
-  maxWidth: "620px",
-  background: "#fff",
-  borderRadius: "16px",
-  overflow: "hidden",
-};
-
-const closeBtnStyle = {
-  position: "absolute",
-  right: 15,
-  top: 15,
-  background: "transparent",
-  border: "none",
-  cursor: "pointer",
-};
-
-const headerStyle = { padding: 20 };
-const titleStyle = { fontSize: 20, fontWeight: "bold" };
-const subtitleStyle = { fontSize: 13, color: "#666" };
-const formStyle = {
-  padding: 20,
-  display: "flex",
-  flexDirection: "column",
-  gap: 12,
-};
-const rowStyle = { display: "flex", gap: 10 };
+/* ================= SUB-COMPONENTES AUXILIARES ================= */
 
 const TypeBtn = ({ active, onClick, icon, label }) => (
   <button
+    type="button"
     onClick={onClick}
-    style={{
-      flex: 1,
-      padding: 10,
-      borderRadius: 10,
-      border: "1px solid #ddd",
-      background: active ? "#2563eb" : "#fff",
-      color: active ? "#fff" : "#000",
-      display: "flex",
-      gap: 6,
-      justifyContent: "center",
-    }}
+    className={`tipo-btn ${active ? "active" : ""}`}
   >
     {icon}
     {label}
   </button>
 );
 
-function Input(props) {
+function Input({ icon, ...props }) {
   return (
-    <input
-      {...props}
-      style={{ padding: 10, border: "1px solid #ddd", borderRadius: 8 }}
-    />
+    <div className="input-group">
+      {icon && <div className="input-icon">{icon}</div>}
+      <input {...props} className="asignacion-input" />
+    </div>
   );
 }
 
 function SelectInput({ icon, children, ...props }) {
   return (
-    <div>
-      {icon}
-      <select {...props} style={{ width: "100%", padding: 10 }}>
+    <div className="input-group">
+      {icon && <div className="input-icon">{icon}</div>}
+      <select {...props} className="asignacion-select">
         {children}
       </select>
     </div>
   );
 }
-
-const textareaStyle = {
-  padding: 10,
-  borderRadius: 8,
-  border: "1px solid #ddd",
-};
-
-const footerStyle = {
-  padding: 20,
-  display: "flex",
-  justifyContent: "flex-end",
-  gap: 10,
-};
-
-const btnPrimaryStyle = {
-  background: "#2563eb",
-  color: "#fff",
-  border: "none",
-  padding: 10,
-  borderRadius: 8,
-};
-
-const btnSecondaryStyle = {
-  background: "#fff",
-  border: "1px solid #ddd",
-  padding: 10,
-  borderRadius: 8,
-};
