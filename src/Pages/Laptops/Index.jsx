@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import {
   Plus,
   Pencil,
@@ -9,6 +10,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
+import "./IndexLaptops.css";
+
 import CrearLaptop from "./CrearLaptops";
 import EditarLaptop from "./EditarLaptops";
 import EliminarLaptop from "./EliminarLaptops";
@@ -17,6 +20,7 @@ export default function Laptops() {
   const [laptops, setLaptops] = useState([]);
 
   const [openModal, setOpenModal] = useState(false);
+
   const [openEdit, setOpenEdit] = useState(false);
   const [laptopEdit, setLaptopEdit] = useState(null);
 
@@ -26,9 +30,6 @@ export default function Laptops() {
   const [fMarca, setFMarca] = useState("");
   const [fEstado, setFEstado] = useState("");
 
-  const [hoverBtn, setHoverBtn] = useState(false);
-  const [hoverExcel, setHoverExcel] = useState(false);
-
   useEffect(() => {
     obtenerLaptops();
   }, []);
@@ -36,7 +37,9 @@ export default function Laptops() {
   const obtenerLaptops = async () => {
     try {
       const res = await fetch("https://localhost:44382/api/LaptopsApi");
+
       const data = await res.json();
+
       setLaptops(data);
     } catch (err) {
       console.log(err);
@@ -57,225 +60,107 @@ export default function Laptops() {
     );
   };
 
-  const estadoBadge = (estado) => {
+  const estadoClass = (estado) => {
     const map = {
-      Activo: { bg: "#dcfce7", color: "#15803d" },
-      Inactivo: { bg: "#fee2e2", color: "#dc2626" },
-      Reparación: { bg: "#fef9c3", color: "#ca8a04" },
-      Perdido: { bg: "#dbeafe", color: "#2563eb" },
+      Activo: "badge badge-activo",
+      Inactivo: "badge badge-inactivo",
+      Reparación: "badge badge-reparacion",
+      Perdido: "badge badge-perdido",
     };
 
-    const s = map[estado] || map.Inactivo;
-
-    return {
-      padding: "4px 10px",
-      borderRadius: "999px",
-      fontSize: "12px",
-      fontWeight: "600",
-      background: s.bg,
-      color: s.color,
-    };
-  };
-
-  const iconBtn = {
-    border: "none",
-    background: "transparent",
-    cursor: "pointer",
-    padding: "6px",
-    borderRadius: "6px",
-    transition: "all 0.15s ease",
-  };
-
-  /* ================= UI ================= */
-
-  const page = {
-    minHeight: "100vh",
-    padding: "28px",
-    background: "#f8fafc",
-    fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Arial",
-  };
-
-  const container = {
-    maxWidth: "1400px",
-    margin: "0 auto",
-  };
-
-  const card = {
-    background: "#fff",
-    borderRadius: "12px",
-    border: "1px solid #e2e8f0",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.05), 0 1px 2px -1px rgba(0,0,0,0.05)",
-    overflow: "hidden",
-  };
-
-  const header = {
-    padding: "18px 20px",
-    borderBottom: "1px solid #e2e8f0",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  };
-
-  const title = {
-    fontSize: "18px",
-    fontWeight: "600",
-    color: "#0f172a",
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-  };
-
-  const filtersBar = {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "14px 20px",
-    borderBottom: "1px solid #e2e8f0",
-    alignItems: "center",
-  };
-
-  const inputWrapper = {
-    position: "relative",
-    display: "flex",
-    alignItems: "center",
-  };
-
-  const input = {
-    padding: "8px 12px 8px 36px",
-    borderRadius: "8px",
-    border: "1px solid #e2e8f0",
-    fontSize: "13px",
-    outline: "none",
-    minWidth: "200px",
-  };
-
-  const iconInside = {
-    position: "absolute",
-    left: "12px",
-    color: "#94a3b8",
-  };
-
-  const btnExcel = {
-    display: "flex",
-    alignItems: "center",
-    gap: "6px",
-    padding: "8px 12px",
-    borderRadius: "8px",
-    border: "1px solid #e2e8f0",
-    background: hoverExcel ? "#f1f5f9" : "#fff",
-    cursor: "pointer",
-    fontSize: "13px",
-  };
-
-  const table = {
-    width: "100%",
-    borderCollapse: "collapse",
-  };
-
-  const th = {
-    textAlign: "left",
-    fontSize: "11px",
-    padding: "12px",
-    color: "#64748b",
-    borderBottom: "1px solid #e2e8f0",
-    textTransform: "uppercase",
-  };
-
-  const td = {
-    padding: "12px",
-    fontSize: "13px",
-    borderBottom: "1px solid #f1f5f9",
-    color: "#334155",
+    return map[estado] || "badge";
   };
 
   return (
-    <div style={page}>
-      <div style={container}>
-        <div style={card}>
+    <div className="laptops-page">
+      <div className="laptops-container">
+        <div className="laptops-card">
           {/* HEADER */}
-          <div style={header}>
-            <div style={title}>
+
+          <div className="laptops-header">
+            <div className="laptops-title">
               <Laptop size={18} />
               Laptops
             </div>
           </div>
 
           {/* FILTERS */}
-          <div style={filtersBar}>
-            <div style={{ display: "flex", gap: "10px" }}>
-              <div style={inputWrapper}>
-                <Search size={15} style={iconInside} />
+
+          <div className="laptops-filters">
+            <div className="filters-left">
+              <div className="input-wrapper">
+                <Search size={15} className="input-icon" />
+
                 <input
-                  style={input}
+                  className="input-system"
                   placeholder="Buscar marca..."
                   value={fMarca}
                   onChange={(e) => setFMarca(e.target.value)}
                 />
               </div>
 
-              <div style={inputWrapper}>
-                <ShieldCheck size={15} style={iconInside} />
+              <div className="input-wrapper">
+                <ShieldCheck size={15} className="input-icon" />
+
                 <input
-                  style={input}
+                  className="input-system"
                   placeholder="Estado..."
                   value={fEstado}
                   onChange={(e) => setFEstado(e.target.value)}
                 />
               </div>
 
-              <button onClick={exportarExcel} style={btnExcel}>
+              <button className="btn-system btn-excel" onClick={exportarExcel}>
                 <FileSpreadsheet size={15} color="#16a34a" />
                 Exportar
               </button>
             </div>
 
             <button
+              className="btn-system btn-create"
               onClick={() => setOpenModal(true)}
-              onMouseEnter={() => setHoverBtn(true)}
-              onMouseLeave={() => setHoverBtn(false)}
-              style={{
-                padding: "8px 12px",
-                borderRadius: "8px",
-                border: "none",
-                background: hoverBtn ? "#0f172a" : "#1e293b",
-                color: "#fff",
-                cursor: "pointer",
-              }}
             >
-              <Plus size={15} /> Nueva Laptop
+              <Plus size={15} />
+              Nueva Laptop
             </button>
           </div>
 
-          {/* TABLE */}
-          <div style={{ padding: "0 10px" }}>
-            <table style={table}>
+          {/* TABLA */}
+
+          <div className="table-wrapper">
+            <table className="laptops-table">
               <thead>
                 <tr>
-                  <th style={th}>Marca</th>
-                  <th style={th}>Modelo</th>
-                  <th style={th}>Serie</th>
-                  <th style={th}>Proveedor</th>
-                  <th style={th}>Observaciones</th>
-                  <th style={th}>Estado</th>
-                  <th style={th}>Acciones</th>
+                  <th>Marca</th>
+                  <th>Modelo</th>
+                  <th>Serie</th>
+                  <th>Proveedor</th>
+                  <th>Observaciones</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
 
               <tbody>
                 {filtrados.map((l) => (
                   <tr key={l.id}>
-                    <td style={td}>{l.marca}</td>
-                    <td style={td}>{l.modelo}</td>
-                    <td style={td}>{l.serie}</td>
-                    <td style={td}>{l.proveedor}</td>
-                    <td style={td}>{l.observaciones}</td>
+                    <td>{l.marca}</td>
 
-                    <td style={td}>
-                      <span style={estadoBadge(l.estado)}>{l.estado}</span>
+                    <td>{l.modelo}</td>
+
+                    <td>{l.serie}</td>
+
+                    <td>{l.proveedor}</td>
+
+                    <td>{l.observaciones}</td>
+
+                    <td>
+                      <span className={estadoClass(l.estado)}>{l.estado}</span>
                     </td>
 
-                    <td style={{ ...td, display: "flex", gap: 6 }}>
+                    <td className="actions">
                       <button
-                        style={iconBtn}
+                        className="icon-btn"
                         onClick={() => {
                           setLaptopEdit(l);
                           setOpenEdit(true);
@@ -285,7 +170,7 @@ export default function Laptops() {
                       </button>
 
                       <button
-                        style={iconBtn}
+                        className="icon-btn delete"
                         onClick={() => {
                           setLaptopDelete(l);
                           setOpenDelete(true);
@@ -299,7 +184,8 @@ export default function Laptops() {
               </tbody>
             </table>
 
-            {/* MODALS */}
+            {/* MODALES */}
+
             <CrearLaptop
               open={openModal}
               onClose={() => setOpenModal(false)}
