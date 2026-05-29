@@ -1,157 +1,220 @@
-.crear-herramienta-overlay {
+/* ==========================================================================
+   DISEÑO MODAL ULTRA-MINIMALISTA DE ACCIONES (ESTILO SAAS PREMIUM)
+   ========================================================================== */
+
+.pro-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.15);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: rgba(15, 23, 42, 0.3);
   backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 1000;
+  animation: proFadeIn 0.2s ease-out;
 }
 
-.crear-herramienta-modal {
-  position: relative;
+.pro-modal-card {
   width: 100%;
-  max-width: 520px;
-  background: #fff;
-  border-radius: 10px;
-  border: 1px solid #e5e5e5;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 
+    0 1px 3px rgba(0,0,0,0.05),
+    0 20px 40px -15px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(226, 232, 240, 0.8);
   overflow: hidden;
-
-  font-family:
-    -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
+  animation: proScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.crear-herramienta-close {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+/* HEADER INTEGRADO */
+.pro-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px 24px 16px 24px;
+}
+
+.pro-modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--slate-900);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.pro-modal-subtitle {
+  font-size: 12.5px;
+  color: var(--slate-400);
+  margin: 4px 0 0 0;
+  line-height: 1.4;
+}
+
+.pro-close-btn {
   background: transparent;
   border: none;
-  cursor: pointer;
-  padding: 6px;
+  color: var(--slate-400);
+  padding: 4px;
   border-radius: 6px;
-  color: #999;
-  transition: all .15s ease;
+  cursor: pointer;
+  display: inline-flex;
+  transition: all 0.1s ease;
 }
 
-.crear-herramienta-close:hover {
-  background: #f5f5f5;
-  color: #111;
+.pro-close-btn:hover {
+  background: var(--slate-100);
+  color: var(--slate-700);
 }
 
-.crear-herramienta-header {
-  padding: 28px 24px 20px;
-}
-
-.crear-herramienta-title {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 600;
-  color: #111;
-}
-
-.crear-herramienta-subtitle {
-  margin-top: 4px;
-  font-size: 13px;
-  color: #666;
-}
-
-.crear-herramienta-form {
-  padding: 0 24px 28px;
+/* CUERPO DEL FORMULARIO */
+.pro-modal-body {
+  padding: 0 24px 20px 24px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
-.crear-herramienta-row {
-  display: flex;
-  gap: 14px;
+/* GRID LAYOUTS INTELIGENTES */
+.pro-form-grid {
+  display: grid;
+  gap: 12px;
 }
 
-.h-input-wrap {
+.pro-form-grid.col-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.pro-form-grid.doc-row {
+  grid-template-columns: 110px 1fr;
+}
+
+/* INPUTS & DROPDOWNS ESTILIZADOS */
+.pro-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
   width: 100%;
 }
 
-.h-input-icon {
+.pro-input-icon {
   position: absolute;
   left: 12px;
-  color: #999;
-  display: flex;
-  align-items: center;
+  color: var(--slate-400);
+  display: inline-flex;
   pointer-events: none;
-  z-index: 2;
+  transition: color 0.15s ease;
 }
 
-.h-input,
-.h-select {
+.pro-input,
+.pro-select {
   width: 100%;
-  padding: 10px 12px 10px 38px;
+  padding: 9px 12px 9px 34px;
+  font-size: 13px;
+  color: var(--slate-900);
+  background: #ffffff;
+  border: 1px solid var(--slate-200);
   border-radius: 6px;
-  border: 1px solid #e5e5e5;
-  font-size: 13.5px;
-  background: #fff;
   outline: none;
-  transition: all .15s ease;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
 }
 
-.h-input:focus,
-.h-select:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 1px #2563eb;
+.pro-input:focus,
+.pro-select:focus {
+  border-color: var(--experis-blue);
+  box-shadow: 0 0 0 1px var(--experis-blue);
 }
 
-.h-select {
+.pro-input-wrapper:focus-within .pro-input-icon {
+  color: var(--experis-blue);
+}
+
+/* SELECT CUSTOMIZATION */
+.pro-select {
   appearance: none;
+  -webkit-appearance: none;
   cursor: pointer;
 }
 
-.crear-herramienta-footer {
-  padding: 16px 24px 24px;
-  border-top: 1px solid #f0f0f0;
+.pro-select-chevron {
+  position: absolute;
+  right: 12px;
+  width: 4px;
+  height: 4px;
+  border-right: 1px solid var(--slate-400);
+  border-bottom: 1px solid var(--slate-400);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+/* FOOTER */
+.pro-modal-footer {
+  padding: 12px 24px 24px 24px;
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  background: #fcfcfc;
+  background: #ffffff;
 }
 
-.btn-secondary {
+/* BOTONES */
+.pro-btn {
+  padding: 8px 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.pro-btn-secondary {
   background: transparent;
-  border: 1px solid #e5e5e5;
-  color: #666;
-  padding: 9px 18px;
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all .15s ease;
+  border: 1px solid var(--slate-200);
+  color: var(--slate-600);
 }
 
-.btn-secondary:hover {
-  background: #f5f5f5;
+.pro-btn-secondary:hover:not(:disabled) {
+  background: var(--slate-50);
+  border-color: var(--slate-300);
+  color: var(--slate-900);
 }
 
-.btn-primary {
-  background: #2563eb;
-  border: none;
-  color: white;
-  padding: 9px 18px;
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all .15s ease;
+.pro-btn-primary {
+  background: var(--slate-900);
+  border: 1px solid var(--slate-900);
+  color: #ffffff;
 }
 
-.btn-primary:hover:not(:disabled) {
-  background: #1d4ed8;
+.pro-btn-primary:hover:not(:disabled) {
+  background: var(--experis-navy);
+  border-color: var(--experis-navy);
 }
 
-.btn-primary:disabled {
-  opacity: .4;
+.pro-btn:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
+  background: var(--slate-100) !important;
+  border-color: var(--slate-200) !important;
+  color: var(--slate-400) !important;
+}
+
+.pro-spinner {
+  animation: proSpin 0.8s linear infinite;
+}
+
+/* ANIMACIONES */
+@keyframes proFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes proScaleUp {
+  from { opacity: 0; transform: scale(0.98) translateY(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes proSpin {
+  to { transform: rotate(360deg); }
 }

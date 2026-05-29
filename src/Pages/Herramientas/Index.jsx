@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import {
   Plus,
   Pencil,
@@ -7,7 +6,9 @@ import {
   Search,
   Package,
   FileSpreadsheet,
+  Loader2,
 } from "lucide-react";
+
 import "./IndexHerramientas.css";
 
 import CrearHerramienta from "./CrearHerramienta";
@@ -16,13 +17,12 @@ import EliminarHerramienta from "./EliminarHerramienta";
 
 export default function Herramientas() {
   const [herramientas, setHerramientas] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // MODALS
   const [openModal, setOpenModal] = useState(false);
-
   const [openEdit, setOpenEdit] = useState(false);
   const [herramientaEdit, setHerramientaEdit] = useState(null);
-
   const [openDelete, setOpenDelete] = useState(false);
   const [herramientaDelete, setHerramientaDelete] = useState(null);
 
@@ -34,28 +34,27 @@ export default function Herramientas() {
     obtenerHerramientas();
   }, []);
 
-  // OBTENER DATA
   const obtenerHerramientas = async () => {
     try {
+      setLoading(true);
       const res = await fetch("https://localhost:44382/api/HerramientasApi");
-
       const data = await res.json();
-
       setHerramientas(data);
     } catch (err) {
-      console.log(err);
+      console.error("Error al obtener herramientas:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // FILTRAR
   const filtrados = herramientas.filter((h) => {
     return (
-      h.descripcion?.toLowerCase().includes(fDescripcion.toLowerCase()) &&
-      h.categoria?.toLowerCase().includes(fCategoria.toLowerCase())
+      (h.descripcion?.toLowerCase() || "").includes(
+        fDescripcion.toLowerCase(),
+      ) && (h.categoria?.toLowerCase() || "").includes(fCategoria.toLowerCase())
     );
   });
 
-  // EXPORTAR
   const exportarExcel = () => {
     window.open(
       "https://localhost:44382/api/HerramientasApi/export/excel",
@@ -63,172 +62,207 @@ export default function Herramientas() {
     );
   };
 
+  // CÁLCULOS DINÁMICOS PARA LAS MÉTRICAS DEL HEADER (Estilo Usuarios)
+  const totalHerramientas = herramientas.length;
+  const activas = herramientas.filter((h) => h.estado).length;
+  const inactivas = totalHerramientas - activas;
+
   return (
     <div className="herramientas-page">
       <div className="herramientas-container">
-        <div className="herramientas-card">
-          {/* HEADER */}
-
-          <div className="herramientas-header">
-            <div className="herramientas-title">Herramientas</div>
+        {/* HEADER OPTIMIZADO STYLE PREMIUM ENTERPRISE */}
+        <div className="page-header-premium">
+          <div className="header-left-side">
+            <div className="breadcrumb-tag">Experis System / Inventario</div>
+            <h1>Gestión de Herramientas</h1>
+            <p className="page-subtitle">
+              Administra el stock, unidades de medida y estados de herramientas
+              e insumos de Experis.
+            </p>
           </div>
 
-          {/* FILTROS */}
+          {/* MÉTRICAS DE CONTEXTO REAL */}
+          {!loading && totalHerramientas > 0 && (
+            <div className="header-stats-container">
+              <div className="stat-pill">
+                <span className="stat-label">Total Items</span>
+                <span className="stat-value">{totalHerramientas}</span>
+              </div>
+              <div className="stat-pill separator"></div>
+              <div className="stat-pill">
+                <span className="stat-label">Disponibles</span>
+                <span className="stat-value active-style">{activas}</span>
+              </div>
+              <div className="stat-pill separator"></div>
+              <div className="stat-pill">
+                <span className="stat-label">Inactivas</span>
+                <span className="stat-value inactive-style">{inactivas}</span>
+              </div>
+            </div>
+          )}
 
+          <div className="header-right-side">
+            <button className="btn-create" onClick={() => setOpenModal(true)}>
+              <Plus size={16} />
+              Nueva Herramienta
+            </button>
+          </div>
+        </div>
+
+        <div className="herramientas-card">
+          {/* FILTERS */}
           <div className="herramientas-filters">
             <div className="filters-left">
-              {/* BUSCAR */}
-
               <div className="input-wrapper">
-                <Search size={15} className="input-icon" />
-
+                <Search size={16} className="input-icon" />
                 <input
-                  className="input-system"
-                  placeholder="Buscar herramienta..."
+                  type="text"
+                  placeholder="Buscar por descripción..."
                   value={fDescripcion}
                   onChange={(e) => setFDescripcion(e.target.value)}
                 />
               </div>
 
-              {/* CATEGORIA */}
-
               <div className="input-wrapper">
-                <Package size={15} className="input-icon" />
-
+                <Package size={16} className="input-icon" />
                 <input
-                  className="input-system"
+                  type="text"
                   placeholder="Categoría..."
                   value={fCategoria}
                   onChange={(e) => setFCategoria(e.target.value)}
                 />
               </div>
-
-              {/* EXPORTAR */}
-
-              <button className="btn-system btn-excel" onClick={exportarExcel}>
-                <FileSpreadsheet size={15} />
-
-                <span>Exportar</span>
-              </button>
             </div>
 
-            {/* CREAR */}
-
-            <button
-              className="btn-system btn-create"
-              onClick={() => setOpenModal(true)}
-            >
-              <Plus size={15} />
-              Nueva Herramienta
+            <button className="btn-excel" onClick={exportarExcel}>
+              <FileSpreadsheet size={16} />
+              Exportar a Excel
             </button>
           </div>
 
-          {/* TABLA */}
-
+          {/* TABLE CONTENT */}
           <div className="table-wrapper">
-            <table className="herramientas-table">
-              <thead>
-                <tr>
-                  <th>Descripción</th>
-                  <th>Unidad</th>
-                  <th>Familia</th>
-                  <th>Stock</th>
-                  <th>Precio</th>
-                  <th>Categoría</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {filtrados.map((h) => (
-                  <tr key={h.id}>
-                    <td>{h.descripcion}</td>
-
-                    <td>
-                      <span className="badge-unidad">
-                        {h.unidadMedida || "Sin unidad"}
-                      </span>
-                    </td>
-
-                    <td>{h.familia || "-"}</td>
-
-                    <td>{h.stock}</td>
-
-                    <td>
-                      <div className="precio-box">
-                        <span className="precio-label">PEN</span>
-
-                        <span>S/ {Number(h.precio).toFixed(2)}</span>
-                      </div>
-                    </td>
-
-                    <td>{h.categoria}</td>
-
-                    <td>
-                      <span
-                        className={
-                          h.estado
-                            ? "badge badge-active"
-                            : "badge badge-inactive"
-                        }
-                      >
-                        {h.estado ? "Activo" : "Inactivo"}
-                      </span>
-                    </td>
-
-                    {/* ACCIONES */}
-
-                    <td className="actions">
-                      <button
-                        className="icon-btn"
-                        onClick={() => {
-                          setHerramientaEdit(h);
-                          setOpenEdit(true);
-                        }}
-                      >
-                        <Pencil size={15} />
-                      </button>
-
-                      <button
-                        className="icon-btn delete"
-                        onClick={() => {
-                          setHerramientaDelete(h);
-                          setOpenDelete(true);
-                        }}
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </td>
+            {loading ? (
+              <div className="table-state-message">
+                <Loader2 size={24} className="spinner" />
+                <p>Cargando inventario de la plataforma...</p>
+              </div>
+            ) : filtrados.length === 0 ? (
+              <div className="table-state-message">
+                <p>
+                  No se encontraron herramientas con los criterios de búsqueda.
+                </p>
+              </div>
+            ) : (
+              <table className="herramientas-table">
+                <thead>
+                  <tr>
+                    <th>Descripción</th>
+                    <th>Unidad</th>
+                    <th>Familia</th>
+                    <th>Stock</th>
+                    <th>Precio</th>
+                    <th>Categoría</th>
+                    <th>Estado</th>
+                    <th className="text-right">Acciones</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
 
-            {/* MODALES */}
-
-            <CrearHerramienta
-              open={openModal}
-              onClose={() => setOpenModal(false)}
-              onCreated={obtenerHerramientas}
-            />
-
-            <EditarHerramienta
-              open={openEdit}
-              onClose={() => setOpenEdit(false)}
-              herramienta={herramientaEdit}
-              onUpdated={obtenerHerramientas}
-            />
-
-            <EliminarHerramienta
-              open={openDelete}
-              onClose={() => setOpenDelete(false)}
-              herramienta={herramientaDelete}
-              onDeleted={obtenerHerramientas}
-            />
+                <tbody>
+                  {filtrados.map((h) => (
+                    <tr key={h.id}>
+                      <td>
+                        <div className="tool-name-cell">
+                          <span className="tool-avatar">
+                            {h.descripcion?.charAt(0)}
+                          </span>
+                          <div>
+                            <span className="font-medium">{h.descripcion}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span className="badge-unidad">
+                          {h.unidadMedida || "Sin unidad"}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="text-secondary">
+                          {h.familia || "—"}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="font-mono">{h.stock}</span>
+                      </td>
+                      <td>
+                        <div className="precio-box">
+                          <span className="precio-label">S/</span>
+                          <span className="font-medium">
+                            {Number(h.precio || 0).toFixed(2)}
+                          </span>
+                        </div>
+                      </td>
+                      <td>
+                        <span className="text-secondary">{h.categoria}</span>
+                      </td>
+                      <td>
+                        <span
+                          className={`badge ${h.estado ? "badge-active" : "badge-inactive"}`}
+                        >
+                          {h.estado ? "Activo" : "Inactivo"}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="acciones justify-end">
+                          <button
+                            className="icon-btn"
+                            title="Editar herramienta"
+                            onClick={() => {
+                              setHerramientaEdit(h);
+                              setOpenEdit(true);
+                            }}
+                          >
+                            <Pencil size={15} />
+                          </button>
+                          <button
+                            className="icon-btn delete"
+                            title="Eliminar herramienta"
+                            onClick={() => {
+                              setHerramientaDelete(h);
+                              setOpenDelete(true);
+                            }}
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <CrearHerramienta
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onCreated={obtenerHerramientas}
+      />
+      <EditarHerramienta
+        open={openEdit}
+        onClose={() => setOpenEdit(false)}
+        herramienta={herramientaEdit}
+        onUpdated={obtenerHerramientas}
+      />
+      <EliminarHerramienta
+        open={openDelete}
+        onClose={() => setOpenDelete(false)}
+        herramienta={herramientaDelete}
+        onDeleted={obtenerHerramientas}
+      />
     </div>
   );
 }

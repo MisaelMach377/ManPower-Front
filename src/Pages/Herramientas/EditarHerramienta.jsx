@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   X,
   Wrench,
@@ -6,10 +7,10 @@ import {
   Boxes,
   DollarSign,
   ShieldCheck,
+  Loader2,
 } from "lucide-react";
-
-import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+
 import "./EditarHerramienta.css";
 
 export default function EditarHerramienta({
@@ -29,15 +30,17 @@ export default function EditarHerramienta({
     estado: true,
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
-    if (herramienta) {
+    if (open && herramienta) {
       setForm({
         ...herramienta,
         stock: herramienta.stock ?? "",
         precio: herramienta.precio ?? "",
       });
     }
-  }, [herramienta]);
+  }, [open, herramienta]);
 
   if (!open) return null;
 
@@ -55,13 +58,18 @@ export default function EditarHerramienta({
     });
   };
 
+  const toggleEstado = () => {
+    setForm((prev) => ({ ...prev, estado: !prev.estado }));
+  };
+
+  const isValid =
+    form.descripcion?.trim() && form.stock !== "" && form.precio !== "";
+
   const editarHerramienta = async () => {
-    if (!isValid) {
-      toast.error("Completa bien los campos");
-      return;
-    }
+    if (!isValid || isSubmitting) return;
 
     try {
+      setIsSubmitting(true);
       const payload = {
         ...form,
         stock: Number(form.stock),
@@ -79,126 +87,120 @@ export default function EditarHerramienta({
         },
       );
 
-      const data = await res.json();
+      const data = res.headers.get("content-type")?.includes("application/json")
+        ? await res.json()
+        : null;
 
       if (!res.ok) {
-        toast.error(data?.message || "Error actualizando");
+        toast.error(data?.message || "Error al actualizar");
         return;
       }
 
       toast.success(data?.message || "Herramienta actualizada 🔥");
-
       onUpdated();
       onClose();
     } catch (err) {
-      console.log(err);
-      toast.error("Error del servidor");
+      console.error(err);
+      toast.error("Error de conexión con el servidor");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const isValid = form.descripcion && form.stock !== "" && form.precio !== "";
-
-  const systemFont =
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
-
   return (
-    <div className="editar-herramienta-overlay" onClick={onClose}>
-      <div
-        className="editar-herramienta-modal"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button className="editar-herramienta-close" onClick={onClose}>
-          <X size={16} strokeWidth={2.5} />
-        </button>
-
-        <div className="editar-herramienta-header">
-          <h3 className="editar-herramienta-title">Editar herramienta</h3>
-
-          <p className="editar-herramienta-subtitle">
-            Actualiza la información y estado de la herramienta.
-          </p>
+    <div className="pro-modal-overlay" onClick={onClose}>
+      <div className="pro-modal-card" onClick={(e) => e.stopPropagation()}>
+        {/* Header Minimalista */}
+        <div className="pro-modal-header">
+          <div>
+            <h3 className="pro-modal-title">Editar herramienta</h3>
+            <p className="pro-modal-subtitle">
+              Actualiza la información y estado operativo de la herramienta.
+            </p>
+          </div>
+          <button className="pro-close-btn" onClick={onClose} title="Cerrar">
+            <X size={14} />
+          </button>
         </div>
 
-        <div className="editar-herramienta-form">
-          <Input
-            icon={<Wrench size={14} />}
+        {/* Cuerpo del Formulario */}
+        <div className="pro-modal-body">
+          <InputField
+            icon={<Wrench size={13} />}
             name="descripcion"
             placeholder="Descripción"
             value={form.descripcion}
             onChange={handleChange}
+            disabled={isSubmitting}
           />
 
-          <div className="editar-herramienta-row">
-            <div className="editar-herramienta-flex">
-              <div className="editar-herramienta-input-wrap">
-                <div className="editar-herramienta-icon">
-                  <Package size={14} />
-                </div>
-
-                <select
-                  name="unidadMedida"
-                  value={form.unidadMedida}
-                  onChange={handleChange}
-                  className="editar-herramienta-select"
-                >
-                  <option value="Unidad">Unidad</option>
-                  <option value="Centímetros">Centímetros</option>
-                  <option value="Metros">Metros</option>
-                  <option value="Kilogramos">Kilogramos</option>
-                  <option value="Litros">Litros</option>
-                  <option value="Caja">Caja</option>
-                  <option value="Paquete">Paquete</option>
-                  <option value="Juego">Juego</option>
-                </select>
+          <div className="pro-form-grid col-2">
+            <div className="pro-input-wrapper">
+              <div className="pro-input-icon">
+                <Package size={13} />
               </div>
+              <select
+                name="unidadMedida"
+                value={form.unidadMedida}
+                onChange={handleChange}
+                className="pro-select"
+                disabled={isSubmitting}
+              >
+                <option value="Unidad">Unidad</option>
+                <option value="Centímetros">Centímetros</option>
+                <option value="Metros">Metros</option>
+                <option value="Kilogramos">Kilogramos</option>
+                <option value="Litros">Litros</option>
+                <option value="Caja">Caja</option>
+                <option value="Paquete">Paquete</option>
+                <option value="Juego">Juego</option>
+              </select>
+              <div className="pro-select-chevron" />
             </div>
 
-            <div className="editar-herramienta-flex">
-              <Input
-                icon={<Layers3 size={14} />}
-                name="familia"
-                placeholder="Familia"
-                value={form.familia}
-                onChange={handleChange}
-              />
-            </div>
+            <InputField
+              icon={<Layers3 size={13} />}
+              name="familia"
+              placeholder="Familia"
+              value={form.familia}
+              onChange={handleChange}
+              disabled={isSubmitting}
+            />
           </div>
 
-          <div className="editar-herramienta-row">
-            <div className="editar-herramienta-flex">
-              <Input
-                icon={<Boxes size={14} />}
-                type="number"
-                name="stock"
-                placeholder="Stock"
-                value={form.stock}
-                onChange={handleChange}
-              />
-            </div>
+          <div className="pro-form-grid col-2">
+            <InputField
+              icon={<Boxes size={13} />}
+              type="number"
+              name="stock"
+              placeholder="Stock"
+              value={form.stock}
+              onChange={handleChange}
+              disabled={isSubmitting}
+            />
 
-            <div className="editar-herramienta-flex">
-              <Input
-                icon={<DollarSign size={14} />}
-                type="number"
-                step="0.01"
-                name="precio"
-                placeholder="Precio"
-                value={form.precio}
-                onChange={handleChange}
-              />
-            </div>
+            <InputField
+              icon={<DollarSign size={13} />}
+              type="number"
+              step="0.01"
+              name="precio"
+              placeholder="Precio"
+              value={form.precio}
+              onChange={handleChange}
+              disabled={isSubmitting}
+            />
           </div>
 
-          <div className="editar-herramienta-input-wrap">
-            <div className="editar-herramienta-icon">
-              <Package size={14} />
+          <div className="pro-input-wrapper">
+            <div className="pro-input-icon">
+              <Package size={13} />
             </div>
-
             <select
               name="categoria"
               value={form.categoria}
               onChange={handleChange}
-              className="editar-herramienta-select"
+              className="pro-select"
+              disabled={isSubmitting}
             >
               <option value="Manual">Manual</option>
               <option value="Eléctrico">Eléctrico</option>
@@ -209,34 +211,21 @@ export default function EditarHerramienta({
               <option value="Soldadura">Soldadura</option>
               <option value="Medición">Medición</option>
             </select>
+            <div className="pro-select-chevron" />
           </div>
 
+          {/* Tarjeta de Estado Premium */}
           <div
-            className={`estado-herramienta ${
-              form.estado ? "activo" : "inactivo"
-            }`}
-            onClick={() =>
-              setForm({
-                ...form,
-                estado: !form.estado,
-              })
-            }
+            className={`pro-status-card ${form.estado ? "is-active" : "is-inactive"}`}
+            onClick={!isSubmitting ? toggleEstado : undefined}
           >
-            <div className="estado-herramienta-left">
-              <div
-                className={`estado-herramienta-icon ${
-                  form.estado ? "activo" : "inactivo"
-                }`}
-              >
-                <ShieldCheck size={16} />
+            <div className="pro-status-left">
+              <div className="pro-status-avatar">
+                <ShieldCheck size={14} />
               </div>
-
               <div>
-                <div className="estado-herramienta-title">
-                  Estado de la herramienta
-                </div>
-
-                <div className="estado-herramienta-subtitle">
+                <div className="pro-status-title">Estado de la herramienta</div>
+                <div className="pro-status-subtitle">
                   {form.estado
                     ? "Herramienta habilitada"
                     : "Herramienta desactivada"}
@@ -244,31 +233,34 @@ export default function EditarHerramienta({
               </div>
             </div>
 
-            <div
-              className={`estado-herramienta-switch ${
-                form.estado ? "activo" : "inactivo"
-              }`}
-            >
-              <div
-                className={`estado-herramienta-ball ${
-                  form.estado ? "activo" : "inactivo"
-                }`}
-              />
+            <div className={`pro-switch ${form.estado ? "on" : "off"}`}>
+              <div className="pro-switch-handle" />
             </div>
           </div>
         </div>
 
-        <div className="editar-herramienta-footer">
-          <button onClick={onClose} className="btn-herramienta-cancelar">
+        {/* Footer Unificado */}
+        <div className="pro-modal-footer">
+          <button
+            className="pro-btn pro-btn-secondary"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
             Cancelar
           </button>
-
           <button
+            className="pro-btn pro-btn-primary"
             onClick={editarHerramienta}
-            disabled={!isValid}
-            className="btn-herramienta-guardar"
+            disabled={!isValid || isSubmitting}
           >
-            Guardar cambios
+            {isSubmitting ? (
+              <>
+                <Loader2 size={13} className="pro-spinner" />
+                <span>Guardando...</span>
+              </>
+            ) : (
+              "Guardar cambios"
+            )}
           </button>
         </div>
       </div>
@@ -276,13 +268,11 @@ export default function EditarHerramienta({
   );
 }
 
-/* INPUT */
-function Input({ icon, ...props }) {
+function InputField({ icon, ...props }) {
   return (
-    <div className="editar-herramienta-input-wrap">
-      <div className="editar-herramienta-icon">{icon}</div>
-
-      <input {...props} className="editar-herramienta-input" />
+    <div className="pro-input-wrapper">
+      <div className="pro-input-icon">{icon}</div>
+      <input {...props} className="pro-input" autoComplete="off" required />
     </div>
   );
 }

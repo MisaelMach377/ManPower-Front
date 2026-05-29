@@ -1,5 +1,7 @@
-import { TriangleAlert, X, Wrench } from "lucide-react";
+import React, { useState } from "react";
+import { X, TriangleAlert, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+
 import "./EliminarHerramienta.css";
 
 export default function EliminarHerramienta({
@@ -8,85 +10,98 @@ export default function EliminarHerramienta({
   herramienta,
   onDeleted,
 }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   if (!open) return null;
 
   const eliminarHerramienta = async () => {
+    if (isSubmitting) return;
+
     try {
+      setIsSubmitting(true);
       const res = await fetch(
-        `https://localhost:44382/api/HerramientasApi/${herramienta.id}`,
-        { method: "DELETE" },
+        `https://localhost:44382/api/HerramientasApi/${herramienta?.id}`,
+        {
+          method: "DELETE",
+        },
       );
 
-      const data = await res.json();
+      const data = res.headers.get("content-type")?.includes("application/json")
+        ? await res.json()
+        : null;
 
       if (!res.ok) {
-        toast.error(data?.message || "Error eliminando");
+        toast.error(data?.message || "Error al eliminar la herramienta");
         return;
       }
 
-      toast.success(data?.message || "Herramienta eliminada");
-
+      toast.success(data?.message || "Herramienta eliminada correctamente");
       onDeleted();
       onClose();
     } catch (err) {
-      console.log(err);
-      toast.error("Error del servidor");
+      console.error(err);
+      toast.error("Error de conexión con el servidor");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="eliminar-herramienta-overlay" onClick={onClose}>
+    <div className="pro-modal-overlay" onClick={onClose}>
       <div
-        className="eliminar-herramienta-modal"
+        className="pro-modal-card alert-width"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* CLOSE */}
-        <button className="eliminar-herramienta-close" onClick={onClose}>
-          <X size={16} />
+        {/* Botón Cerrar Superior */}
+        <button
+          className="pro-close-btn pos-absolute"
+          onClick={onClose}
+          title="Cancelar"
+        >
+          <X size={14} />
         </button>
 
-        {/* ICON */}
-        <div className="eliminar-herramienta-icon">
-          <TriangleAlert size={28} />
-        </div>
-
-        {/* TITLE */}
-        <h3 className="eliminar-herramienta-title">
-          ¿Deseas eliminar esta herramienta?
-        </h3>
-
-        {/* SUBTITLE */}
-        <p className="eliminar-herramienta-subtitle">
-          Esta acción eliminará permanentemente{" "}
-          <strong>{herramienta?.descripcion}</strong>.
-        </p>
-
-        {/* INFO */}
-        <div className="eliminar-herramienta-info">
-          <div className="eliminar-herramienta-row">
-            <Wrench size={14} />
-            <span>{herramienta?.categoria || "Sin categoría"}</span>
+        <div className="pro-alert-body">
+          {/* Icono Destructivo Premium */}
+          <div className="pro-alert-icon-wrapper">
+            <TriangleAlert size={16} />
           </div>
 
-          <div className="eliminar-herramienta-stock">
-            Stock: {herramienta?.stock}
+          {/* Contenido del Mensaje */}
+          <div className="pro-alert-content">
+            <h3 className="pro-modal-title">¿Eliminar esta herramienta?</h3>
+            <p className="pro-modal-subtitle">
+              Esta acción eliminará de forma permanente el registro de{" "}
+              <span className="pro-highlight-text">
+                {herramienta?.descripcion}
+              </span>{" "}
+              del inventario. No se puede deshacer.
+            </p>
           </div>
         </div>
 
-        {/* FOOTER */}
-        <div className="eliminar-herramienta-footer">
+        {/* Footer Acoplado */}
+        <div className="pro-modal-footer padding-alert">
           <button
-            className="eliminar-herramienta-btn-secondary"
+            className="pro-btn pro-btn-secondary"
             onClick={onClose}
+            disabled={isSubmitting}
           >
             Cancelar
           </button>
-
           <button
-            className="eliminar-herramienta-btn-danger"
+            className="pro-btn pro-btn-danger"
             onClick={eliminarHerramienta}
+            disabled={isSubmitting}
           >
-            Eliminar herramienta
+            {isSubmitting ? (
+              <>
+                <Loader2 size={13} className="pro-spinner" />
+                <span>Eliminando...</span>
+              </>
+            ) : (
+              "Eliminar herramienta"
+            )}
           </button>
         </div>
       </div>
