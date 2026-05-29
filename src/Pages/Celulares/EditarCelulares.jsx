@@ -11,6 +11,8 @@ import {
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
+import "./EditarCelular.css";
+
 const initialForm = {
   id: 0,
   marca: "",
@@ -82,7 +84,7 @@ export default function EditarCelular({ open, onClose, celular, onUpdated }) {
         return;
       }
 
-      toast.success("Celular actualizado 🔥");
+      toast.success("Celular actualizado correctamente");
       onUpdated();
       onClose();
     } catch (err) {
@@ -95,24 +97,27 @@ export default function EditarCelular({ open, onClose, celular, onUpdated }) {
     '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial';
 
   return (
-    <div style={overlayStyle} onClick={onClose}>
+    <div className="editar-celular-overlay" onClick={onClose}>
       <div
-        style={{ ...modalStyle, fontFamily: systemFont }}
+        className="editar-celular-modal"
+        style={{ fontFamily: systemFont }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* CLOSE */}
-        <button style={closeBtnStyle} onClick={onClose}>
+        <button className="editar-celular-close" onClick={onClose}>
           <X size={16} />
         </button>
 
         {/* HEADER */}
-        <div style={headerStyle}>
-          <h3 style={titleStyle}>Editar celular</h3>
-          <p style={subtitleStyle}>Actualiza los datos del celular</p>
+        <div className="editar-celular-header">
+          <h3 className="editar-celular-title">Editar celular</h3>
+          <p className="editar-celular-subtitle">
+            Actualiza los datos del celular
+          </p>
         </div>
 
         {/* FORM */}
-        <div style={formStyle}>
+        <div className="editar-celular-form">
           <Input
             icon={<Smartphone size={14} />}
             name="marca"
@@ -137,7 +142,6 @@ export default function EditarCelular({ open, onClose, celular, onUpdated }) {
             onChange={handleChange}
           />
 
-          {/* CELULAR (9 DIGITOS) */}
           <Input
             icon={<Phone size={14} />}
             name="celular"
@@ -148,8 +152,8 @@ export default function EditarCelular({ open, onClose, celular, onUpdated }) {
           />
 
           {/* OPERACION */}
-          <div style={inputWrapStyle}>
-            <div style={iconStyle}>
+          <div className="editar-celular-input-wrap">
+            <div className="editar-celular-icon">
               <ShieldCheck size={14} />
             </div>
 
@@ -157,7 +161,7 @@ export default function EditarCelular({ open, onClose, celular, onUpdated }) {
               name="operacion"
               value={form.operacion}
               onChange={handleChange}
-              style={selectStyle}
+              className="editar-celular-select"
             >
               <option value="Asignación">Asignación</option>
               <option value="Devolución">Devolución</option>
@@ -166,7 +170,6 @@ export default function EditarCelular({ open, onClose, celular, onUpdated }) {
             </select>
           </div>
 
-          {/* PROVEEDOR */}
           <Input
             icon={<Building2 size={14} />}
             name="proveedor"
@@ -176,8 +179,8 @@ export default function EditarCelular({ open, onClose, celular, onUpdated }) {
           />
 
           {/* ESTADO */}
-          <div style={inputWrapStyle}>
-            <div style={iconStyle}>
+          <div className="editar-celular-input-wrap">
+            <div className="editar-celular-icon">
               <ShieldCheck size={14} />
             </div>
 
@@ -185,7 +188,7 @@ export default function EditarCelular({ open, onClose, celular, onUpdated }) {
               name="estado"
               value={form.estado}
               onChange={handleChange}
-              style={selectStyle}
+              className="editar-celular-select"
             >
               <option value="Activo">Activo</option>
               <option value="Inactivo">Inactivo</option>
@@ -196,30 +199,15 @@ export default function EditarCelular({ open, onClose, celular, onUpdated }) {
         </div>
 
         {/* FOOTER */}
-        <div style={footerStyle}>
-          <button
-            onClick={onClose}
-            style={btnSecondaryStyle}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = "#f5f5f5";
-              e.currentTarget.style.color = "#111";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.color = "#999";
-            }}
-          >
+        <div className="editar-celular-footer">
+          <button onClick={onClose} className="editar-celular-btn-secondary">
             Cancelar
           </button>
 
           <button
             onClick={editarCelular}
             disabled={!isValid}
-            style={{
-              ...btnPrimaryStyle,
-              opacity: isValid ? 1 : 0.4,
-              cursor: isValid ? "pointer" : "not-allowed",
-            }}
+            className="editar-celular-btn-primary"
           >
             Guardar cambios
           </button>
@@ -232,131 +220,10 @@ export default function EditarCelular({ open, onClose, celular, onUpdated }) {
 /* INPUT */
 function Input({ icon, ...props }) {
   return (
-    <div style={inputWrapStyle}>
-      <div style={iconStyle}>{icon}</div>
-      <input
-        {...props}
-        style={inputStyle}
-        onFocus={(e) => {
-          e.target.style.borderColor = "#2563eb";
-          e.target.style.boxShadow = "0 0 0 1px #2563eb";
-        }}
-        onBlur={(e) => {
-          e.target.style.borderColor = "#e5e5e5";
-          e.target.style.boxShadow = "none";
-        }}
-      />
+    <div className="editar-celular-input-wrap">
+      <div className="editar-celular-icon">{icon}</div>
+
+      <input {...props} className="editar-celular-input" />
     </div>
   );
 }
-
-/* STYLES (igual que herramientas) */
-const overlayStyle = {
-  position: "fixed",
-  inset: 0,
-  background: "rgba(0,0,0,0.15)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  backdropFilter: "blur(4px)",
-  zIndex: 1000,
-};
-
-const modalStyle = {
-  width: "100%",
-  maxWidth: "520px",
-  background: "#fff",
-  borderRadius: "12px",
-  border: "1px solid #e5e5e5",
-  boxShadow: "0 20px 40px rgba(0,0,0,0.08)",
-  position: "relative",
-};
-
-const headerStyle = {
-  padding: "24px 24px 10px 24px",
-};
-
-const titleStyle = {
-  margin: 0,
-  fontSize: "17px",
-  fontWeight: "600",
-};
-
-const subtitleStyle = {
-  margin: "4px 0 0 0",
-  fontSize: "13px",
-  color: "#666",
-};
-
-const formStyle = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "12px",
-  padding: "0 24px 24px",
-};
-
-const inputWrapStyle = {
-  position: "relative",
-};
-
-const iconStyle = {
-  position: "absolute",
-  left: "10px",
-  top: "50%",
-  transform: "translateY(-50%)",
-  color: "#999",
-};
-
-const inputStyle = {
-  width: "100%",
-  padding: "10px 10px 10px 36px",
-  border: "1px solid #e5e5e5",
-  borderRadius: "8px",
-  fontSize: "13px",
-  outline: "none",
-  boxSizing: "border-box",
-};
-
-const selectStyle = {
-  ...inputStyle,
-  cursor: "pointer",
-};
-
-const footerStyle = {
-  padding: "14px 24px 18px 24px",
-  display: "flex",
-  justifyContent: "flex-end",
-  gap: "10px",
-  borderTop: "1px solid #eee",
-};
-
-const btnPrimaryStyle = {
-  background: "#2563eb",
-  color: "#fff",
-  border: "none",
-  padding: "9px 14px",
-  borderRadius: "8px",
-};
-
-const closeBtnStyle = {
-  position: "absolute",
-  top: "14px",
-  right: "14px",
-  border: "none",
-  background: "transparent",
-  cursor: "pointer",
-  padding: "6px",
-  borderRadius: "6px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  color: "#999",
-  transition: "all 0.15s ease",
-};
-
-const btnSecondaryStyle = {
-  background: "transparent",
-  border: "1px solid #ddd",
-  padding: "9px 14px",
-  borderRadius: "8px",
-};

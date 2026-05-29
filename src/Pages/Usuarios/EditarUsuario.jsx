@@ -10,6 +10,7 @@ import {
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import "./EditarUsuario.css";
 
 export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
   const [form, setForm] = useState({
@@ -88,41 +89,26 @@ export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
     '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
 
   return (
-    <div style={overlayStyle} onClick={onClose}>
+    <div className="editar-usuario-overlay" onClick={onClose}>
       <div
-        style={{ ...modalStyle, fontFamily: systemFont }}
+        className="editar-usuario-modal"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* BOTÓN CERRAR */}
-        <button
-          style={closeBtnStyle}
-          onClick={onClose}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = "#f5f5f5";
-            e.currentTarget.style.color = "#111111";
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = "transparent";
-            e.currentTarget.style.color = "#999999";
-          }}
-        >
+        <button className="editar-usuario-close" onClick={onClose}>
           <X size={16} strokeWidth={2.5} />
         </button>
 
-        {/* HEADER */}
-        <div style={headerStyle}>
-          <h3 style={titleStyle}>Editar usuario</h3>
+        <div className="editar-usuario-header">
+          <h3 className="editar-usuario-title">Editar usuario</h3>
 
-          <p style={subtitleStyle}>
+          <p className="editar-usuario-subtitle">
             Actualiza la información y estado del usuario.
           </p>
         </div>
 
-        {/* FORM */}
-        <div style={formStyle}>
-          {/* NOMBRE / APELLIDO */}
-          <div style={rowStyle}>
-            <div style={{ flex: 1 }}>
+        <div className="editar-usuario-form">
+          <div className="editar-usuario-row">
+            <div className="editar-usuario-flex">
               <Input
                 icon={<User size={14} />}
                 name="nombre"
@@ -132,7 +118,7 @@ export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
               />
             </div>
 
-            <div style={{ flex: 1 }}>
+            <div className="editar-usuario-flex">
               <Input
                 icon={<User size={14} />}
                 name="apellido"
@@ -143,11 +129,10 @@ export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
             </div>
           </div>
 
-          {/* DOC */}
-          <div style={rowStyle}>
-            <div style={{ width: "32%" }}>
-              <div style={inputWrapStyle}>
-                <div style={iconStyle}>
+          <div className="editar-usuario-row">
+            <div className="editar-usuario-doc-small">
+              <div className="editar-usuario-input-wrap">
+                <div className="editar-usuario-icon">
                   <BadgeInfo size={14} />
                 </div>
 
@@ -155,7 +140,7 @@ export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
                   name="tipoDocumento"
                   value={form.tipoDocumento}
                   onChange={handleChange}
-                  style={selectStyle}
+                  className="editar-usuario-select"
                 >
                   <option value="DNI">DNI</option>
                   <option value="Pasaporte">PAS</option>
@@ -164,7 +149,7 @@ export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
               </div>
             </div>
 
-            <div style={{ width: "68%" }}>
+            <div className="editar-usuario-doc-large">
               <Input
                 icon={<Hash size={14} />}
                 name="numeroDocumento"
@@ -175,7 +160,6 @@ export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
             </div>
           </div>
 
-          {/* CORREO */}
           <Input
             icon={<Mail size={14} />}
             name="correo"
@@ -184,7 +168,6 @@ export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
             onChange={handleChange}
           />
 
-          {/* CELULAR */}
           <Input
             icon={<Phone size={14} />}
             name="celular"
@@ -194,66 +177,26 @@ export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
             onChange={handleChange}
           />
 
-          {/* ESTADO */}
           <div
+            className={`estado-card ${form.activo ? "activo" : "inactivo"}`}
             onClick={() =>
               setForm({
                 ...form,
                 activo: !form.activo,
               })
             }
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              border: "1px solid #e5e5e5",
-              borderRadius: "8px",
-              padding: "12px 14px",
-              cursor: "pointer",
-              transition: "all 0.15s ease",
-              background: form.activo ? "#f0fdf4" : "#fafafa",
-            }}
           >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-              }}
-            >
+            <div className="estado-left">
               <div
-                style={{
-                  width: "32px",
-                  height: "32px",
-                  borderRadius: "8px",
-                  background: form.activo ? "#dcfce7" : "#f1f5f9",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: form.activo ? "#16a34a" : "#64748b",
-                }}
+                className={`estado-icon ${form.activo ? "activo" : "inactivo"}`}
               >
                 <ShieldCheck size={16} />
               </div>
 
               <div>
-                <div
-                  style={{
-                    fontSize: "13px",
-                    fontWeight: "600",
-                    color: "#111827",
-                  }}
-                >
-                  Estado del usuario
-                </div>
+                <div className="estado-title">Estado del usuario</div>
 
-                <div
-                  style={{
-                    fontSize: "12px",
-                    color: "#64748b",
-                    marginTop: "2px",
-                  }}
-                >
+                <div className="estado-subtitle">
                   {form.activo
                     ? "Usuario habilitado en el sistema"
                     : "Usuario desactivado"}
@@ -261,59 +204,27 @@ export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
               </div>
             </div>
 
-            {/* SWITCH */}
             <div
-              style={{
-                width: "42px",
-                height: "24px",
-                borderRadius: "999px",
-                background: form.activo ? "#2563eb" : "#cbd5e1",
-                position: "relative",
-                transition: "all 0.2s ease",
-              }}
+              className={`estado-switch ${form.activo ? "activo" : "inactivo"}`}
             >
               <div
-                style={{
-                  width: "18px",
-                  height: "18px",
-                  borderRadius: "50%",
-                  background: "#fff",
-                  position: "absolute",
-                  top: "3px",
-                  left: form.activo ? "21px" : "3px",
-                  transition: "all 0.2s ease",
-                  boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
-                }}
+                className={`estado-switch-ball ${
+                  form.activo ? "activo" : "inactivo"
+                }`}
               />
             </div>
           </div>
         </div>
 
-        {/* FOOTER */}
-        <div style={footerStyle}>
-          <button
-            onClick={onClose}
-            style={btnSecondaryStyle}
-            onMouseOver={(e) => (e.target.style.background = "#f5f5f5")}
-            onMouseOut={(e) => (e.target.style.background = "transparent")}
-          >
+        <div className="editar-usuario-footer">
+          <button onClick={onClose} className="btn-cancelar">
             Cancelar
           </button>
 
           <button
             onClick={editarUsuario}
             disabled={!isValid}
-            style={{
-              ...btnPrimaryStyle,
-              opacity: isValid ? 1 : 0.4,
-              cursor: isValid ? "pointer" : "not-allowed",
-            }}
-            onMouseOver={(e) => {
-              if (isValid) e.target.style.background = "#1d4ed8";
-            }}
-            onMouseOut={(e) => {
-              if (isValid) e.target.style.background = "#2563eb";
-            }}
+            className="btn-guardar"
           >
             Guardar cambios
           </button>
@@ -326,161 +237,10 @@ export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
 /* INPUT REUTILIZABLE */
 function Input({ icon, ...props }) {
   return (
-    <div style={inputWrapStyle}>
-      <div style={iconStyle}>{icon}</div>
+    <div className="editar-usuario-input-wrap">
+      <div className="editar-usuario-icon">{icon}</div>
 
-      <input
-        {...props}
-        style={inputStyle}
-        onFocus={(e) => {
-          e.target.style.borderColor = "#2563eb";
-          e.target.style.boxShadow = "0 0 0 1px #2563eb";
-        }}
-        onBlur={(e) => {
-          e.target.style.borderColor = "#e5e5e5";
-          e.target.style.boxShadow = "none";
-        }}
-      />
+      <input {...props} className="editar-usuario-input" />
     </div>
   );
 }
-
-/* ESTILOS */
-
-const overlayStyle = {
-  position: "fixed",
-  inset: 0,
-  background: "rgba(0, 0, 0, 0.15)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  backdropFilter: "blur(4px)",
-  zIndex: 1000,
-};
-
-const modalStyle = {
-  position: "relative",
-  width: "100%",
-  maxWidth: "520px",
-  background: "#ffffff",
-  borderRadius: "10px",
-  border: "1px solid #e5e5e5",
-  boxShadow: "0 20px 40px rgba(0,0,0,0.06)",
-  overflow: "hidden",
-};
-
-const closeBtnStyle = {
-  position: "absolute",
-  top: "20px",
-  right: "20px",
-  background: "transparent",
-  border: "none",
-  cursor: "pointer",
-  padding: "6px",
-  borderRadius: "6px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  color: "#999999",
-  transition: "all 0.15s ease",
-  zIndex: 10,
-};
-
-const headerStyle = {
-  padding: "28px 24px 20px 24px",
-  display: "flex",
-  flexDirection: "column",
-};
-
-const titleStyle = {
-  fontSize: "17px",
-  fontWeight: "600",
-  color: "#111111",
-  margin: 0,
-  letterSpacing: "-0.01em",
-};
-
-const subtitleStyle = {
-  fontSize: "13px",
-  color: "#666666",
-  margin: "4px 0 0 0",
-};
-
-const formStyle = {
-  padding: "0 24px 28px 24px",
-  display: "flex",
-  flexDirection: "column",
-  gap: "14px",
-};
-
-const rowStyle = {
-  display: "flex",
-  gap: "14px",
-};
-
-const inputWrapStyle = {
-  position: "relative",
-  display: "flex",
-  alignItems: "center",
-  width: "100%",
-};
-
-const iconStyle = {
-  position: "absolute",
-  left: "12px",
-  color: "#999999",
-  display: "flex",
-  alignItems: "center",
-  pointerEvents: "none",
-};
-
-const inputStyle = {
-  width: "100%",
-  padding: "10px 12px 10px 38px",
-  borderRadius: "6px",
-  border: "1px solid #e5e5e5",
-  fontSize: "13.5px",
-  color: "#222222",
-  background: "#ffffff",
-  outline: "none",
-  transition: "all 0.15s ease",
-};
-
-const selectStyle = {
-  ...inputStyle,
-  paddingLeft: "34px",
-  cursor: "pointer",
-  appearance: "none",
-};
-
-const footerStyle = {
-  padding: "16px 24px 24px 24px",
-  borderTop: "1px solid #f0f0f0",
-  display: "flex",
-  justifyContent: "flex-end",
-  gap: "8px",
-  background: "#fcfcfc",
-};
-
-const btnPrimaryStyle = {
-  background: "#2563eb",
-  border: "none",
-  color: "#ffffff",
-  padding: "9px 18px",
-  borderRadius: "6px",
-  fontSize: "13px",
-  fontWeight: "500",
-  transition: "background 0.15s ease",
-};
-
-const btnSecondaryStyle = {
-  background: "transparent",
-  border: "1px solid #e5e5e5",
-  color: "#666666",
-  padding: "9px 18px",
-  borderRadius: "6px",
-  fontSize: "13px",
-  fontWeight: "500",
-  cursor: "pointer",
-  transition: "all 0.15s ease",
-};

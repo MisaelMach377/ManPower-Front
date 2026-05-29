@@ -1,5 +1,6 @@
 import { TriangleAlert, X, Smartphone } from "lucide-react";
 import toast from "react-hot-toast";
+import "./EliminarCelular.css";
 
 export default function EliminarCelular({ open, onClose, celular, onDeleted }) {
   if (!open) return null;
@@ -8,9 +9,7 @@ export default function EliminarCelular({ open, onClose, celular, onDeleted }) {
     try {
       const res = await fetch(
         `https://localhost:44382/api/CelularesApi/${celular.id}`,
-        {
-          method: "DELETE",
-        },
+        { method: "DELETE" },
       );
 
       const data = await res.json();
@@ -21,7 +20,6 @@ export default function EliminarCelular({ open, onClose, celular, onDeleted }) {
       }
 
       toast.success(data?.message || "Celular eliminado 🔥");
-
       onDeleted();
       onClose();
     } catch (err) {
@@ -31,22 +29,25 @@ export default function EliminarCelular({ open, onClose, celular, onDeleted }) {
   };
 
   return (
-    <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+    <div className="eliminar-celular-overlay" onClick={onClose}>
+      <div
+        className="eliminar-celular-modal"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* CLOSE */}
-        <button style={closeBtnStyle} onClick={onClose}>
+        <button className="eliminar-celular-close" onClick={onClose}>
           <X size={16} />
         </button>
 
         {/* ICON */}
-        <div style={iconContainer}>
+        <div className="eliminar-celular-icon">
           <TriangleAlert size={28} />
         </div>
 
         {/* TITLE */}
-        <h3 style={titleStyle}>¿Eliminar este celular?</h3>
+        <h3 className="eliminar-celular-title">¿Eliminar este celular?</h3>
 
-        <p style={subtitleStyle}>
+        <p className="eliminar-celular-subtitle">
           Esta acción eliminará permanentemente el celular{" "}
           <strong>
             {celular?.marca} {celular?.modelo}
@@ -55,22 +56,22 @@ export default function EliminarCelular({ open, onClose, celular, onDeleted }) {
         </p>
 
         {/* INFO */}
-        <div style={toolInfoStyle}>
-          <div style={toolInfoRow}>
+        <div className="eliminar-celular-info">
+          <div className="eliminar-celular-row">
             <Smartphone size={14} />
             <span>{celular?.marca}</span>
           </div>
 
-          <div style={stockBadgeStyle}>IMEI: {celular?.imei}</div>
+          <div className="eliminar-celular-badge">IMEI: {celular?.imei}</div>
         </div>
 
         {/* FOOTER */}
-        <div style={footerStyle}>
-          <button style={btnSecondaryStyle} onClick={onClose}>
+        <div className="eliminar-celular-footer">
+          <button className="btn-secondary" onClick={onClose}>
             Cancelar
           </button>
 
-          <button style={btnDangerStyle} onClick={eliminarCelular}>
+          <button className="btn-danger" onClick={eliminarCelular}>
             Eliminar celular
           </button>
         </div>
@@ -78,109 +79,3 @@ export default function EliminarCelular({ open, onClose, celular, onDeleted }) {
     </div>
   );
 }
-
-/* STYLES */
-const overlayStyle = {
-  position: "fixed",
-  inset: 0,
-  background: "rgba(0,0,0,0.15)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  backdropFilter: "blur(4px)",
-  zIndex: 1000,
-};
-
-const modalStyle = {
-  width: "100%",
-  maxWidth: "420px",
-  background: "#fff",
-  borderRadius: "16px",
-  padding: "28px",
-  position: "relative",
-  boxShadow: "0 20px 40px rgba(0,0,0,0.08)",
-  border: "1px solid #e5e7eb",
-};
-
-const closeBtnStyle = {
-  position: "absolute",
-  top: "18px",
-  right: "18px",
-  background: "transparent",
-  border: "none",
-  cursor: "pointer",
-  color: "#94a3b8",
-};
-
-const iconContainer = {
-  width: "58px",
-  height: "58px",
-  borderRadius: "16px",
-  background: "#fef2f2",
-  color: "#dc2626",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  marginBottom: "18px",
-};
-
-const titleStyle = {
-  margin: 0,
-  fontSize: "18px",
-  fontWeight: "700",
-  color: "#0f172a",
-};
-
-const subtitleStyle = {
-  fontSize: "14px",
-  color: "#64748b",
-  marginTop: "10px",
-};
-
-const toolInfoStyle = {
-  marginTop: "18px",
-  padding: "14px",
-  borderRadius: "12px",
-  background: "#f8fafc",
-  border: "1px solid #e2e8f0",
-  display: "flex",
-  justifyContent: "space-between",
-};
-
-const toolInfoRow = {
-  display: "flex",
-  alignItems: "center",
-  gap: "8px",
-};
-
-const stockBadgeStyle = {
-  background: "#dbeafe",
-  color: "#2563eb",
-  padding: "4px 10px",
-  borderRadius: "999px",
-  fontSize: "12px",
-  fontWeight: "600",
-};
-
-const footerStyle = {
-  display: "flex",
-  justifyContent: "flex-end",
-  gap: "10px",
-  marginTop: "28px",
-};
-
-const btnSecondaryStyle = {
-  background: "#fff",
-  border: "1px solid #e2e8f0",
-  color: "#475569",
-  padding: "10px 16px",
-  borderRadius: "8px",
-};
-
-const btnDangerStyle = {
-  background: "#dc2626",
-  border: "none",
-  color: "#fff",
-  padding: "10px 16px",
-  borderRadius: "8px",
-};
