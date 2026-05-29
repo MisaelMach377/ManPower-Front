@@ -1,100 +1,174 @@
-.eliminar-overlay {
+/* ==========================================================================
+   DISEÑO ULTRA-MINIMALISTA PARA ALERTAS / ELIMINACIÓN
+   ========================================================================== */
+
+/* Clases base heredadas de la estructura pro-modal */
+.pro-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.15);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: rgba(15, 23, 42, 0.3);
   backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 1000;
+  animation: proFadeIn 0.2s ease-out;
 }
 
-.eliminar-modal {
+.pro-modal-card {
   width: 100%;
-  max-width: 420px;
-  background: #fff;
-  border-radius: 16px;
-  padding: 28px;
-  position: relative;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 
+    0 1px 3px rgba(0,0,0,0.05),
+    0 20px 40px -15px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  overflow: hidden;
+  animation: proScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.eliminar-close {
+/* Ajuste específico para modales de confirmación pequeños */
+.pro-modal-card.alert-width {
+  max-width: 400px; 
+}
+
+/* Botón cerrar flotante */
+.pro-close-btn.pos-absolute {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 16px;
+  right: 16px;
   background: transparent;
   border: none;
+  color: var(--slate-400, #94a3b8);
+  padding: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  color: #94a3b8;
-  transition: 0.2s;
+  display: inline-flex;
+  transition: all 0.1s ease;
+  z-index: 20;
 }
 
-.eliminar-close:hover {
-  color: #111;
-  transform: scale(1.05);
+.pro-close-btn.pos-absolute:hover {
+  background: var(--slate-100, #f1f5f9);
+  color: var(--slate-700, #334155);
 }
 
-.eliminar-icon {
-  width: 58px;
-  height: 58px;
-  border-radius: 16px;
+/* ESTRUCTURA DEL CONTENIDO DE ALERTA */
+.pro-alert-body {
+  display: flex;
+  gap: 14px;
+  padding: 24px 24px 12px 24px;
+  align-items: flex-start;
+}
+
+/* Icono rojo minimalista (sin cajas gigantes) */
+.pro-alert-icon-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   background: #fef2f2;
-  color: #dc2626;
+  color: #ef4444; /* Rojo refinado */
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 18px;
+  flex-shrink: 0;
 }
 
-.eliminar-title {
+.pro-alert-content {
+  flex: 1;
+}
+
+.pro-modal-title {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--slate-900, #0f172a);
   margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: #0f172a;
+  letter-spacing: -0.01em;
 }
 
-.eliminar-subtitle {
-  font-size: 14px;
-  color: #64748b;
-  margin-top: 10px;
+.pro-modal-subtitle {
+  font-size: 12.5px;
+  color: var(--slate-400, #64748b);
+  margin: 6px 0 0 0;
   line-height: 1.5;
 }
 
-.eliminar-footer {
+/* Resaltado de texto elegante */
+.pro-highlight-text {
+  font-weight: 500;
+  color: var(--slate-800, #1e293b);
+}
+
+/* FOOTER DEL ALERT */
+.pro-modal-footer.padding-alert {
+  padding: 12px 24px 24px 24px;
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 28px;
+  gap: 8px;
+  background: #ffffff;
 }
 
-.eliminar-btn-secondary {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  color: #475569;
-  padding: 10px 16px;
-  border-radius: 8px;
-  cursor: pointer;
+/* BOTONES SEMÁNTICOS */
+.pro-btn {
+  padding: 8px 14px;
+  font-size: 12.5px;
   font-weight: 500;
-  transition: 0.2s;
-}
-
-.eliminar-btn-secondary:hover {
-  background: #f3f4f6;
-}
-
-.eliminar-btn-danger {
-  background: #dc2626;
-  border: none;
-  color: #fff;
-  padding: 10px 16px;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
-  transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
 }
 
-.eliminar-btn-danger:hover {
-  background: #b91c1c;
+.pro-btn-secondary {
+  background: transparent;
+  border: 1px solid var(--slate-200, #e2e8f0);
+  color: var(--slate-600, #475569);
+}
+
+.pro-btn-secondary:hover:not(:disabled) {
+  background: var(--slate-50, #f8fafc);
+  border-color: var(--slate-300, #cbd5e1);
+}
+
+/* Botón destructivo pro (Estilo Vercel/Linear) */
+.pro-btn-danger {
+  background: #ef4444;
+  border: 1px solid #ef4444;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.pro-btn-danger:hover:not(:disabled) {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+/* Estado bloqueado suave */
+.pro-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--slate-100, #f1f5f9) !important;
+  border-color: var(--slate-200, #e2e8f0) !important;
+  color: var(--slate-400, #94a3b8) !important;
+}
+
+.pro-spinner {
+  animation: proSpin 0.8s linear infinite;
+}
+
+/* ANIMACIONES COMPARTIDAS */
+@keyframes proFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes proScaleUp {
+  from { opacity: 0; transform: scale(0.98) translateY(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes proSpin {
+  to { transform: rotate(360deg); }
 }

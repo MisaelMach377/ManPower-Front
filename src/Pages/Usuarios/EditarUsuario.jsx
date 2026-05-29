@@ -1,15 +1,16 @@
+import React, { useEffect, useState } from "react";
 import {
   X,
   User,
   Mail,
   Phone,
   Hash,
-  BadgeInfo,
+  CreditCard,
   ShieldCheck,
+  Loader2,
 } from "lucide-react";
-
-import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+
 import "./EditarUsuario.css";
 
 export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
@@ -24,32 +25,42 @@ export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
     activo: true,
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
-    if (usuario) {
+    if (open && usuario) {
       setForm(usuario);
     }
-  }, [usuario]);
+  }, [open, usuario]);
 
   if (!open) return null;
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
+    const { name, value } = e.target;
     if (name === "celular" && !/^\d*$/.test(value)) return;
 
     setForm({
       ...form,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     });
   };
 
+  const toggleActivo = () => {
+    setForm((prev) => ({ ...prev, activo: !prev.activo }));
+  };
+
+  const isValid =
+    form.nombre?.trim() &&
+    form.apellido?.trim() &&
+    form.numeroDocumento?.trim() &&
+    form.correo?.trim() &&
+    form.celular?.length === 9;
+
   const editarUsuario = async () => {
-    if (!isValid) {
-      toast.error("Completa bien los campos");
-      return;
-    }
+    if (!isValid || isSubmitting) return;
 
     try {
+      setIsSubmitting(true);
       const res = await fetch(
         `https://localhost:44382/api/UsuariosApi/${form.id}`,
         {
@@ -61,172 +72,160 @@ export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
         },
       );
 
-      const data = await res.json();
+      // Validamos contenido JSON de forma segura
+      const data = res.headers.get("content-type")?.includes("application/json")
+        ? await res.json()
+        : null;
 
       if (!res.ok) {
-        toast.error(data?.message || "Error actualizando");
+        toast.error(data?.message || "Error al actualizar");
         return;
       }
 
       toast.success(data?.message || "Usuario actualizado");
-
       onUpdated();
       onClose();
     } catch (err) {
-      console.log(err);
-      toast.error("Error del servidor");
+      console.error(err);
+      toast.error("Error de conexión con el servidor");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const isValid =
-    form.nombre &&
-    form.apellido &&
-    form.numeroDocumento &&
-    form.correo &&
-    form.celular?.length === 9;
-
-  const systemFont =
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
-
   return (
-    <div className="editar-usuario-overlay" onClick={onClose}>
-      <div
-        className="editar-usuario-modal"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button className="editar-usuario-close" onClick={onClose}>
-          <X size={16} strokeWidth={2.5} />
-        </button>
-
-        <div className="editar-usuario-header">
-          <h3 className="editar-usuario-title">Editar usuario</h3>
-
-          <p className="editar-usuario-subtitle">
-            Actualiza la información y estado del usuario.
-          </p>
+    <div className="pro-modal-overlay" onClick={onClose}>
+      <div className="pro-modal-card" onClick={(e) => e.stopPropagation()}>
+        {/* Header Minimalista */}
+        <div className="pro-modal-header">
+          <div>
+            <h3 className="pro-modal-title">Modificar Perfil</h3>
+            <p className="pro-modal-subtitle">
+              Actualiza las credenciales y el estado operativo en Experis.
+            </p>
+          </div>
+          <button className="pro-close-btn" onClick={onClose} title="Cerrar">
+            <X size={14} />
+          </button>
         </div>
 
-        <div className="editar-usuario-form">
-          <div className="editar-usuario-row">
-            <div className="editar-usuario-flex">
-              <Input
-                icon={<User size={14} />}
-                name="nombre"
-                placeholder="Nombre"
-                value={form.nombre}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="editar-usuario-flex">
-              <Input
-                icon={<User size={14} />}
-                name="apellido"
-                placeholder="Apellido"
-                value={form.apellido}
-                onChange={handleChange}
-              />
-            </div>
+        {/* Cuerpo del Formulario */}
+        <div className="pro-modal-body">
+          <div className="pro-form-grid col-2">
+            <InputField
+              icon={<User size={13} />}
+              name="nombre"
+              placeholder="Nombre"
+              value={form.nombre}
+              onChange={handleChange}
+              disabled={isSubmitting}
+            />
+            <InputField
+              icon={<User size={13} />}
+              name="apellido"
+              placeholder="Apellido"
+              value={form.apellido}
+              onChange={handleChange}
+              disabled={isSubmitting}
+            />
           </div>
 
-          <div className="editar-usuario-row">
-            <div className="editar-usuario-doc-small">
-              <div className="editar-usuario-input-wrap">
-                <div className="editar-usuario-icon">
-                  <BadgeInfo size={14} />
-                </div>
-
-                <select
-                  name="tipoDocumento"
-                  value={form.tipoDocumento}
-                  onChange={handleChange}
-                  className="editar-usuario-select"
-                >
-                  <option value="DNI">DNI</option>
-                  <option value="Pasaporte">PAS</option>
-                  <option value="CE">C.E</option>
-                </select>
+          <div className="pro-form-grid doc-row">
+            <div className="pro-input-wrapper">
+              <div className="pro-input-icon">
+                <CreditCard size={13} />
               </div>
+              <select
+                name="tipoDocumento"
+                value={form.tipoDocumento}
+                onChange={handleChange}
+                className="pro-select"
+                disabled={isSubmitting}
+              >
+                <option value="DNI">DNI</option>
+                <option value="Pasaporte">PAS</option>
+                <option value="CE">C.E</option>
+              </select>
+              <div className="pro-select-chevron" />
             </div>
 
-            <div className="editar-usuario-doc-large">
-              <Input
-                icon={<Hash size={14} />}
-                name="numeroDocumento"
-                placeholder="N° Documento"
-                value={form.numeroDocumento}
-                onChange={handleChange}
-              />
-            </div>
+            <InputField
+              icon={<Hash size={13} />}
+              name="numeroDocumento"
+              placeholder="Número de documento"
+              value={form.numeroDocumento}
+              onChange={handleChange}
+              disabled={isSubmitting}
+            />
           </div>
 
-          <Input
-            icon={<Mail size={14} />}
+          <InputField
+            icon={<Mail size={13} />}
             name="correo"
+            type="email"
             placeholder="Correo electrónico"
             value={form.correo}
             onChange={handleChange}
+            disabled={isSubmitting}
           />
 
-          <Input
-            icon={<Phone size={14} />}
+          <InputField
+            icon={<Phone size={13} />}
             name="celular"
             placeholder="Celular (9 dígitos)"
             maxLength={9}
             value={form.celular}
             onChange={handleChange}
+            disabled={isSubmitting}
           />
 
+          {/* Tarjeta de Estado Versión Pro Minimalista */}
           <div
-            className={`estado-card ${form.activo ? "activo" : "inactivo"}`}
-            onClick={() =>
-              setForm({
-                ...form,
-                activo: !form.activo,
-              })
-            }
+            className={`pro-status-card ${form.activo ? "is-active" : "is-inactive"}`}
+            onClick={!isSubmitting ? toggleActivo : undefined}
           >
-            <div className="estado-left">
-              <div
-                className={`estado-icon ${form.activo ? "activo" : "inactivo"}`}
-              >
-                <ShieldCheck size={16} />
+            <div className="pro-status-left">
+              <div className="pro-status-avatar">
+                <ShieldCheck size={14} />
               </div>
-
               <div>
-                <div className="estado-title">Estado del usuario</div>
-
-                <div className="estado-subtitle">
+                <div className="pro-status-title">Estado del acceso</div>
+                <div className="pro-status-subtitle">
                   {form.activo
-                    ? "Usuario habilitado en el sistema"
-                    : "Usuario desactivado"}
+                    ? "Cuenta totalmente operativa"
+                    : "Acceso revocado temporalmente"}
                 </div>
               </div>
             </div>
 
-            <div
-              className={`estado-switch ${form.activo ? "activo" : "inactivo"}`}
-            >
-              <div
-                className={`estado-switch-ball ${
-                  form.activo ? "activo" : "inactivo"
-                }`}
-              />
+            <div className={`pro-switch ${form.activo ? "on" : "off"}`}>
+              <div className="pro-switch-handle" />
             </div>
           </div>
         </div>
 
-        <div className="editar-usuario-footer">
-          <button onClick={onClose} className="btn-cancelar">
+        {/* Footer Unificado */}
+        <div className="pro-modal-footer">
+          <button
+            className="pro-btn pro-btn-secondary"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
             Cancelar
           </button>
-
           <button
+            className="pro-btn pro-btn-primary"
             onClick={editarUsuario}
-            disabled={!isValid}
-            className="btn-guardar"
+            disabled={!isValid || isSubmitting}
           >
-            Guardar cambios
+            {isSubmitting ? (
+              <>
+                <Loader2 size={13} className="pro-spinner" />
+                <span>Guardando...</span>
+              </>
+            ) : (
+              "Guardar Cambios"
+            )}
           </button>
         </div>
       </div>
@@ -234,13 +233,11 @@ export default function EditarUsuario({ open, onClose, usuario, onUpdated }) {
   );
 }
 
-/* INPUT REUTILIZABLE */
-function Input({ icon, ...props }) {
+function InputField({ icon, ...props }) {
   return (
-    <div className="editar-usuario-input-wrap">
-      <div className="editar-usuario-icon">{icon}</div>
-
-      <input {...props} className="editar-usuario-input" />
+    <div className="pro-input-wrapper">
+      <div className="pro-input-icon">{icon}</div>
+      <input {...props} className="pro-input" autoComplete="off" required />
     </div>
   );
 }

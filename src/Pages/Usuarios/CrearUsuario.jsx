@@ -1,6 +1,5 @@
-import { X, User, Mail, Phone, Hash, BadgeInfo } from "lucide-react";
-
-import { useState } from "react";
+import React, { useState } from "react";
+import { X, User, Mail, Phone, Hash, CreditCard, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 import "./CrearUsuario.css";
@@ -15,9 +14,10 @@ export default function CrearUsuario({ open, onClose, onCreated }) {
     celular: "",
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name === "celular" && !/^\d*$/.test(value)) return;
 
     setForm({
@@ -27,141 +27,164 @@ export default function CrearUsuario({ open, onClose, onCreated }) {
   };
 
   const isValid =
-    form.nombre &&
-    form.apellido &&
-    form.numeroDocumento &&
-    form.correo &&
+    form.nombre.trim() &&
+    form.apellido.trim() &&
+    form.numeroDocumento.trim() &&
+    form.correo.trim() &&
     form.celular?.length === 9;
 
   const crearUsuario = async () => {
-    if (!isValid) {
-      toast.error("Completa bien los campos");
-      return;
-    }
+    if (!isValid || isSubmitting) return;
 
     try {
+      setIsSubmitting(true);
       const res = await fetch("https://localhost:44382/api/UsuariosApi", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
-      const data = await res.json();
+      const data = res.headers.get("content-type")?.includes("application/json")
+        ? await res.json()
+        : null;
 
       if (!res.ok) {
         toast.error(data?.message || "Error creando usuario");
         return;
       }
 
-      toast.success(data?.message || "Usuario creado correctamente 🔥");
+      toast.success(data?.message || "Usuario registrado correctamente");
+
+      setForm({
+        nombre: "",
+        apellido: "",
+        tipoDocumento: "DNI",
+        numeroDocumento: "",
+        correo: "",
+        celular: "",
+      });
 
       onClose();
       onCreated();
     } catch (err) {
-      console.log(err);
-      toast.error("Error de servidor");
+      console.error(err);
+      toast.error("Error de conexión con el servidor");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   if (!open) return null;
 
   return (
-    <div className="crear-usuario-overlay" onClick={onClose}>
-      <div className="crear-usuario-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="crear-usuario-close" onClick={onClose}>
-          <X size={16} strokeWidth={2.5} />
-        </button>
-
-        <div className="crear-usuario-header">
-          <h3 className="crear-usuario-title">Crear nuevo usuario</h3>
-
-          <p className="crear-usuario-subtitle">
-            Introduce las credenciales e información del perfil.
-          </p>
+    <div className="pro-modal-overlay" onClick={onClose}>
+      <div className="pro-modal-card" onClick={(e) => e.stopPropagation()}>
+        {/* Header Minimalista */}
+        <div className="pro-modal-header">
+          <div>
+            <h3 className="pro-modal-title">Nuevo Usuario</h3>
+            <p className="pro-modal-subtitle">
+              Registra las credenciales de acceso para el personal de Experis.
+            </p>
+          </div>
+          <button className="pro-close-btn" onClick={onClose} title="Cerrar">
+            <X size={14} />
+          </button>
         </div>
 
-        <div className="crear-usuario-form">
-          <div className="crear-usuario-row">
-            <Input
-              icon={<User size={14} />}
+        {/* Formulario Estilizado */}
+        <div className="pro-modal-body">
+          <div className="pro-form-grid col-2">
+            <InputField
+              icon={<User size={13} />}
               name="nombre"
               placeholder="Nombre"
-              onChange={handleChange}
               value={form.nombre}
+              onChange={handleChange}
+              disabled={isSubmitting}
             />
-
-            <Input
-              icon={<User size={14} />}
+            <InputField
+              icon={<User size={13} />}
               name="apellido"
               placeholder="Apellido"
-              onChange={handleChange}
               value={form.apellido}
+              onChange={handleChange}
+              disabled={isSubmitting}
             />
           </div>
 
-          <div className="crear-usuario-row">
-            <div style={{ width: "32%" }}>
-              <div className="input-wrap">
-                <div className="input-icon">
-                  <BadgeInfo size={14} />
-                </div>
-
-                <select
-                  name="tipoDocumento"
-                  onChange={handleChange}
-                  value={form.tipoDocumento}
-                  className="select-custom"
-                >
-                  <option value="DNI">DNI</option>
-                  <option value="Pasaporte">PAS</option>
-                  <option value="CE">C.E</option>
-                </select>
+          <div className="pro-form-grid doc-row">
+            <div className="pro-input-wrapper">
+              <div className="pro-input-icon">
+                <CreditCard size={13} />
               </div>
+              <select
+                name="tipoDocumento"
+                value={form.tipoDocumento}
+                onChange={handleChange}
+                className="pro-select"
+                disabled={isSubmitting}
+              >
+                <option value="DNI">DNI</option>
+                <option value="Pasaporte">PASAPORTE</option>
+                <option value="CE">C.E.</option>
+              </select>
+              <div className="pro-select-chevron" />
             </div>
 
-            <div style={{ width: "68%" }}>
-              <Input
-                icon={<Hash size={14} />}
-                name="numeroDocumento"
-                placeholder="N° Documento"
-                onChange={handleChange}
-                value={form.numeroDocumento}
-              />
-            </div>
+            <InputField
+              icon={<Hash size={13} />}
+              name="numeroDocumento"
+              placeholder="Número de documento"
+              value={form.numeroDocumento}
+              onChange={handleChange}
+              disabled={isSubmitting}
+            />
           </div>
 
-          <Input
-            icon={<Mail size={14} />}
+          <InputField
+            icon={<Mail size={13} />}
             name="correo"
             type="email"
-            placeholder="Correo electrónico"
-            onChange={handleChange}
+            placeholder="Correo electrónico institucional"
             value={form.correo}
+            onChange={handleChange}
+            disabled={isSubmitting}
           />
 
-          <Input
-            icon={<Phone size={14} />}
+          <InputField
+            icon={<Phone size={13} />}
             name="celular"
             placeholder="Celular (9 dígitos)"
             maxLength={9}
-            onChange={handleChange}
             value={form.celular}
+            onChange={handleChange}
+            disabled={isSubmitting}
           />
         </div>
 
-        <div className="crear-usuario-footer">
-          <button className="btn-secondary" onClick={onClose}>
+        {/* Footer Unificado Sin Cortes Visuales */}
+        <div className="pro-modal-footer">
+          <button
+            className="pro-btn pro-btn-secondary"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
             Cancelar
           </button>
-
           <button
-            className="btn-primary"
+            className="pro-btn pro-btn-primary"
             onClick={crearUsuario}
-            disabled={!isValid}
+            disabled={!isValid || isSubmitting}
           >
-            Guardar usuario
+            {isSubmitting ? (
+              <>
+                <Loader2 size={13} className="pro-spinner" />
+                <span>Guardando...</span>
+              </>
+            ) : (
+              "Crear Cuenta"
+            )}
           </button>
         </div>
       </div>
@@ -169,13 +192,12 @@ export default function CrearUsuario({ open, onClose, onCreated }) {
   );
 }
 
-/* INPUT REUTILIZABLE */
-function Input({ icon, ...props }) {
+/* Componente Interno Optimizador de Markup */
+function InputField({ icon, ...props }) {
   return (
-    <div className="input-wrap">
-      <div className="input-icon">{icon}</div>
-
-      <input {...props} className="input-custom" required />
+    <div className="pro-input-wrapper">
+      <div className="pro-input-icon">{icon}</div>
+      <input {...props} className="pro-input" autoComplete="off" required />
     </div>
   );
 }
