@@ -100,26 +100,32 @@ export default function Sidebar() {
           onClick={() => navigate("/asignacion")}
         />
 
-        <SidebarButton
-          icon={<RotateCcw size={17} strokeWidth={1.8} />}
-          label="Devolución"
-          active={location.pathname === "/devolucion"}
-          onClick={() => navigate("/devolucion")}
-        />
+        {/*
+  <SidebarButton
+    icon={<RotateCcw size={17} strokeWidth={1.8} />}
+    label="Devolución"
+    active={location.pathname === "/devolucion"}
+    onClick={() => navigate("/devolucion")}
+  />
+*/}
 
+        {/*
         <SidebarButton
           icon={<History size={17} strokeWidth={1.8} />}
           label="Historial"
           active={location.pathname === "/historial"}
           onClick={() => navigate("/historial")}
         />
+*/}
 
+        {/*
         <SidebarButton
           icon={<Layers3 size={17} strokeWidth={1.8} />}
           label="Categorías"
           active={location.pathname === "/categorias"}
           onClick={() => navigate("/categorias")}
         />
+              */}
       </div>
     </aside>
   );
