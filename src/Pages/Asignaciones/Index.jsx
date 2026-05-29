@@ -7,53 +7,54 @@ import {
   User,
   Laptop,
   Smartphone,
+  Wrench,
+  ClipboardList,
 } from "lucide-react";
 
 import CrearAsignacion from "./CrearAsignaciones";
+import Devolucion from "./Devolucion";
 
 export default function Asignaciones() {
   const [asignaciones, setAsignaciones] = useState([]);
-
   const [hoverBtn, setHoverBtn] = useState(false);
-
-  // MODAL
   const [openModal, setOpenModal] = useState(false);
+  const [openDevolucion, setOpenDevolucion] = useState(false);
+  const [asignacionSeleccionada, setAsignacionSeleccionada] = useState(null);
 
-  // FILTROS
   const [fUsuario, setFUsuario] = useState("");
   const [fDocumento, setFDocumento] = useState("");
+  const badgeDevolucion = (estado) => ({
+    padding: "4px 10px",
+    borderRadius: "999px",
+    fontSize: "11px",
+    fontWeight: "600",
+    background: estado === "DEVUELTO" ? "#ecfdf5" : "#fef3c7",
+    color: estado === "DEVUELTO" ? "#16a34a" : "#b45309",
+  });
 
   useEffect(() => {
     obtenerAsignaciones();
   }, []);
 
-  // OBTENER ASIGNACIONES
   const obtenerAsignaciones = async () => {
     try {
       const res = await fetch("https://localhost:44382/api/AsignacionesApi");
-
       const data = await res.json();
-
       setAsignaciones(data);
     } catch (err) {
       console.log(err);
     }
   };
 
-  // FORMATEAR FECHA
   const formatDate = (date) => {
     if (!date) return "-";
-
     const d = new Date(date);
 
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const year = d.getFullYear();
-
-    return `${day}/${month}/${year}`;
+    return `${String(d.getDate()).padStart(2, "0")}/${String(
+      d.getMonth() + 1,
+    ).padStart(2, "0")}/${d.getFullYear()}`;
   };
 
-  // FILTROS
   const filtrados = asignaciones.filter((a) => {
     return (
       a.usuario?.toLowerCase().includes(fUsuario.toLowerCase()) &&
@@ -61,7 +62,6 @@ export default function Asignaciones() {
     );
   });
 
-  // ESTILOS
   const page = {
     minHeight: "100vh",
     padding: "28px",
@@ -69,17 +69,14 @@ export default function Asignaciones() {
     fontFamily: "system-ui, sans-serif",
   };
 
-  const container = {
-    maxWidth: "1400px",
-    margin: "0 auto",
-  };
+  const container = { maxWidth: "1400px", margin: "0 auto" };
 
   const card = {
     background: "#fff",
     borderRadius: "12px",
     border: "1px solid #e2e8f0",
     overflow: "hidden",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.05)",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
   };
 
   const header = {
@@ -87,48 +84,36 @@ export default function Asignaciones() {
     borderBottom: "1px solid #e2e8f0",
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center",
   };
 
-  const title = {
-    fontSize: "18px",
-    fontWeight: "600",
-    color: "#0f172a",
-  };
+  const title = { fontSize: "18px", fontWeight: "600", color: "#0f172a" };
 
   const filtersBar = {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center",
     padding: "14px 20px",
     borderBottom: "1px solid #e2e8f0",
   };
 
-  const inputWrapper = {
-    position: "relative",
-    display: "flex",
-    alignItems: "center",
-  };
+  const inputWrapper = { position: "relative", display: "flex" };
 
   const input = {
     padding: "8px 12px 8px 36px",
     borderRadius: "8px",
     border: "1px solid #e2e8f0",
     fontSize: "13px",
-    outline: "none",
     minWidth: "220px",
   };
 
   const iconInside = {
     position: "absolute",
     left: "12px",
+    top: "50%",
+    transform: "translateY(-50%)",
     color: "#94a3b8",
   };
 
-  const table = {
-    width: "100%",
-    borderCollapse: "collapse",
-  };
+  const table = { width: "100%", borderCollapse: "collapse" };
 
   const th = {
     textAlign: "left",
@@ -136,8 +121,8 @@ export default function Asignaciones() {
     fontWeight: "600",
     color: "#64748b",
     padding: "12px",
-    textTransform: "uppercase",
     borderBottom: "1px solid #e2e8f0",
+    textTransform: "uppercase",
   };
 
   const td = {
@@ -152,9 +137,18 @@ export default function Asignaciones() {
     borderRadius: "999px",
     fontSize: "11px",
     fontWeight: "600",
-    background: tipo === "LAPTOP" ? "#eff6ff" : "#f0fdf4",
-
-    color: tipo === "LAPTOP" ? "#2563eb" : "#16a34a",
+    background:
+      tipo === "LAPTOP"
+        ? "#eff6ff"
+        : tipo === "CELULAR"
+          ? "#f0fdf4"
+          : "#fff7ed",
+    color:
+      tipo === "LAPTOP"
+        ? "#2563eb"
+        : tipo === "CELULAR"
+          ? "#16a34a"
+          : "#c2410c",
   });
 
   const iconBtn = {
@@ -163,9 +157,16 @@ export default function Asignaciones() {
     cursor: "pointer",
     padding: "6px",
     borderRadius: "6px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+  };
+
+  const getIcon = (tipo) => {
+    if (tipo === "LAPTOP") return <Laptop size={15} color="#2563eb" />;
+    if (tipo === "CELULAR") return <Smartphone size={15} color="#16a34a" />;
+    return <Wrench size={15} color="#c2410c" />;
+  };
+
+  const getEquipo = (a) => {
+    return a.laptop || a.celular || a.herramienta || "-";
   };
 
   return (
@@ -182,7 +183,6 @@ export default function Asignaciones() {
             <div style={{ display: "flex", gap: "10px" }}>
               <div style={inputWrapper}>
                 <Search size={15} style={iconInside} />
-
                 <input
                   style={input}
                   placeholder="Buscar usuario..."
@@ -193,7 +193,6 @@ export default function Asignaciones() {
 
               <div style={inputWrapper}>
                 <User size={15} style={iconInside} />
-
                 <input
                   style={input}
                   placeholder="Documento..."
@@ -203,7 +202,6 @@ export default function Asignaciones() {
               </div>
             </div>
 
-            {/* BOTÓN */}
             <button
               onClick={() => setOpenModal(true)}
               onMouseEnter={() => setHoverBtn(true)}
@@ -219,8 +217,6 @@ export default function Asignaciones() {
                 color: "#fff",
                 fontWeight: "500",
                 fontSize: "13px",
-                cursor: "pointer",
-                transition: "all 0.15s ease",
               }}
             >
               <Plus size={15} />
@@ -228,7 +224,7 @@ export default function Asignaciones() {
             </button>
           </div>
 
-          {/* TABLA */}
+          {/* TABLE */}
           <div style={{ padding: "0 10px" }}>
             <table style={table}>
               <thead>
@@ -241,6 +237,9 @@ export default function Asignaciones() {
                   <th style={th}>Zona</th>
                   <th style={th}>Estado</th>
                   <th style={th}>Fecha</th>
+                  <th style={th}>Estado Dev.</th>
+                  <th style={th}>Fecha Dev.</th>
+                  <th style={th}>Obs Dev.</th>
                   <th style={th}>Acciones</th>
                 </tr>
               </thead>
@@ -249,7 +248,6 @@ export default function Asignaciones() {
                 {filtrados.map((a) => (
                   <tr key={a.id}>
                     <td style={td}>{a.usuario}</td>
-
                     <td style={td}>{a.documento}</td>
 
                     <td style={td}>
@@ -259,55 +257,43 @@ export default function Asignaciones() {
                     </td>
 
                     <td style={td}>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                        }}
-                      >
-                        {a.tipoHerramienta === "LAPTOP" ? (
-                          <Laptop size={15} color="#2563eb" />
-                        ) : (
-                          <Smartphone size={15} color="#16a34a" />
-                        )}
-
-                        {a.laptop || a.celular}
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        {getIcon(a.tipoHerramienta)}
+                        {getEquipo(a)}
                       </div>
                     </td>
 
                     <td style={td}>{a.numeroGuia || "-"}</td>
-
                     <td style={td}>{a.zona || "-"}</td>
-
                     <td style={td}>{a.estado}</td>
-
                     <td style={td}>{formatDate(a.fechaAsignacion)}</td>
+                    <td style={td}>
+                      <span style={badgeDevolucion(a.estadoDevolucion)}>
+                        {a.estadoDevolucion || "PENDIENTE"}
+                      </span>
+                    </td>
+                    <td style={td}>
+                      {a.fechaDevolucion ? formatDate(a.fechaDevolucion) : "-"}
+                    </td>
 
-                    {/* ACCIONES */}
-                    <td style={{ ...td, display: "flex", gap: "4px" }}>
-                      <button
-                        style={iconBtn}
-                        onMouseOver={(e) =>
-                          (e.currentTarget.style.background = "#f1f5f9")
-                        }
-                        onMouseOut={(e) =>
-                          (e.currentTarget.style.background = "transparent")
-                        }
-                      >
-                        <Pencil size={15} color="#475569" />
+                    <td style={td}>{a.observacionDevolucion || "-"}</td>
+
+                    <td style={{ ...td, display: "flex", gap: "6px" }}>
+                      <button style={iconBtn}>
+                        <Pencil size={15} />
                       </button>
 
+                      <button style={iconBtn}>
+                        <Trash2 size={15} color="#dc2626" />
+                      </button>
                       <button
                         style={iconBtn}
-                        onMouseOver={(e) =>
-                          (e.currentTarget.style.background = "#fef2f2")
-                        }
-                        onMouseOut={(e) =>
-                          (e.currentTarget.style.background = "transparent")
-                        }
+                        onClick={() => {
+                          setAsignacionSeleccionada(a); // 👈 guardas la fila
+                          setOpenDevolucion(true); // 👈 abres modal
+                        }}
                       >
-                        <Trash2 size={15} color="#dc2626" />
+                        <ClipboardList size={15} color="#2563eb" />
                       </button>
                     </td>
                   </tr>
@@ -322,6 +308,14 @@ export default function Asignaciones() {
       <CrearAsignacion
         open={openModal}
         onClose={() => setOpenModal(false)}
+        obtenerAsignaciones={obtenerAsignaciones}
+      />
+
+      {/* DEVOLUCION */}
+      <Devolucion
+        open={openDevolucion}
+        onClose={() => setOpenDevolucion(false)}
+        asignacion={asignacionSeleccionada}
         obtenerAsignaciones={obtenerAsignaciones}
       />
     </div>

@@ -6,7 +6,7 @@ import {
   FileText,
   MapPin,
   ClipboardList,
-  Cpu,
+  Wrench,
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
@@ -20,6 +20,7 @@ export default function CrearAsignacion({
   const [usuarios, setUsuarios] = useState([]);
   const [celulares, setCelulares] = useState([]);
   const [laptops, setLaptops] = useState([]);
+  const [herramientas, setHerramientas] = useState([]);
 
   const [form, setForm] = useState({
     usuarioId: "",
@@ -27,6 +28,7 @@ export default function CrearAsignacion({
 
     celularId: "",
     laptopId: "",
+    herramientaId: "",
 
     numeroGuia: "",
     zona: "",
@@ -34,70 +36,38 @@ export default function CrearAsignacion({
     observaciones: "",
   });
 
-  // =========================
-  // CARGAR LISTAS
-  // =========================
-
   useEffect(() => {
     if (open) {
       obtenerUsuarios();
       obtenerCelulares();
       obtenerLaptops();
+      obtenerHerramientas();
     }
   }, [open]);
 
   const obtenerUsuarios = async () => {
-    try {
-      const res = await fetch("https://localhost:44382/api/UsuariosApi");
-
-      const data = await res.json();
-
-      setUsuarios(data);
-    } catch (err) {
-      console.log(err);
-    }
+    const res = await fetch("https://localhost:44382/api/UsuariosApi");
+    setUsuarios(await res.json());
   };
 
   const obtenerCelulares = async () => {
-    try {
-      const res = await fetch("https://localhost:44382/api/CelularesApi");
-
-      const data = await res.json();
-
-      setCelulares(data);
-    } catch (err) {
-      console.log(err);
-    }
+    const res = await fetch("https://localhost:44382/api/CelularesApi");
+    setCelulares(await res.json());
   };
 
   const obtenerLaptops = async () => {
-    try {
-      const res = await fetch("https://localhost:44382/api/LaptopsApi");
-
-      const data = await res.json();
-
-      setLaptops(data);
-    } catch (err) {
-      console.log(err);
-    }
+    const res = await fetch("https://localhost:44382/api/LaptopsApi");
+    setLaptops(await res.json());
   };
 
-  // =========================
-  // HANDLE CHANGE
-  // =========================
+  const obtenerHerramientas = async () => {
+    const res = await fetch("https://localhost:44382/api/HerramientasApi");
+    setHerramientas(await res.json());
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setForm({
-      ...form,
-      [name]: value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
-
-  // =========================
-  // CREAR
-  // =========================
 
   const crearAsignacion = async () => {
     try {
@@ -111,6 +81,11 @@ export default function CrearAsignacion({
         laptopId:
           form.tipoHerramienta === "LAPTOP" ? Number(form.laptopId) : null,
 
+        herramientaId:
+          form.tipoHerramienta === "HERRAMIENTA"
+            ? Number(form.herramientaId)
+            : null,
+
         numeroGuia: form.numeroGuia,
         zona: form.zona,
         estado: form.estado,
@@ -119,42 +94,35 @@ export default function CrearAsignacion({
 
       const res = await fetch("https://localhost:44382/api/AsignacionesApi", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      console.log("STATUS:", res.status);
-
-      // ✔️ LEER SOLO UNA VEZ
       const data = await res.json();
-      console.log("RESPONSE:", data);
 
       if (!res.ok) {
-        toast.error(data?.message || "Error creando asignación");
+        toast.error(data?.message || "Error");
         return;
       }
 
-      toast.success(data?.message || "Asignación creada correctamente 🔥");
+      toast.success("Asignación creada 🔥");
 
       onClose();
       obtenerAsignaciones();
 
-      // LIMPIAR FORM
       setForm({
         usuarioId: "",
         tipoHerramienta: "CELULAR",
         celularId: "",
         laptopId: "",
+        herramientaId: "",
         numeroGuia: "",
         zona: "",
         estado: "ACTIVO",
         observaciones: "",
       });
     } catch (err) {
-      console.log(err);
-      toast.error("Error del servidor");
+      toast.error("Error servidor");
     }
   };
 
@@ -163,34 +131,21 @@ export default function CrearAsignacion({
   const isValid =
     form.usuarioId &&
     ((form.tipoHerramienta === "CELULAR" && form.celularId) ||
-      (form.tipoHerramienta === "LAPTOP" && form.laptopId));
-
-  // USUARIO SELECCIONADO
-  const selectedUsuario = usuarios.find((u) => u.id == form.usuarioId);
-
-  // EQUIPO SELECCIONADO
-  const selectedCelular = celulares.find((c) => c.id == form.celularId);
-
-  const selectedLaptop = laptops.find((l) => l.id == form.laptopId);
+      (form.tipoHerramienta === "LAPTOP" && form.laptopId) ||
+      (form.tipoHerramienta === "HERRAMIENTA" && form.herramientaId));
 
   return (
     <div style={overlayStyle} onClick={onClose}>
       <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-        {/* CERRAR */}
         <button style={closeBtnStyle} onClick={onClose}>
           <X size={16} />
         </button>
 
-        {/* HEADER */}
         <div style={headerStyle}>
           <h2 style={titleStyle}>Nueva asignación</h2>
-
-          <p style={subtitleStyle}>
-            Asigna herramientas corporativas a un colaborador.
-          </p>
+          <p style={subtitleStyle}>Asigna equipos o herramientas</p>
         </div>
 
-        {/* FORM */}
         <div style={formStyle}>
           {/* USUARIO */}
           <SelectInput
@@ -199,8 +154,7 @@ export default function CrearAsignacion({
             value={form.usuarioId}
             onChange={handleChange}
           >
-            <option value="">Seleccionar usuario</option>
-
+            <option value="">Usuario</option>
             {usuarios.map((u) => (
               <option key={u.id} value={u.id}>
                 {u.nombre} {u.apellido}
@@ -208,182 +162,128 @@ export default function CrearAsignacion({
             ))}
           </SelectInput>
 
-          {/* INFO USUARIO */}
-          {selectedUsuario && (
-            <div style={infoCard}>
-              <div>
-                <span style={infoLabel}>Documento</span>
-
-                <div style={infoValue}>{selectedUsuario.numeroDocumento}</div>
-              </div>
-
-              <div>
-                <span style={infoLabel}>Correo</span>
-
-                <div style={infoValue}>{selectedUsuario.correo}</div>
-              </div>
-            </div>
-          )}
-
-          {/* TIPO */}
+          {/* BOTONES */}
           <div style={rowStyle}>
-            <button
-              type="button"
-              style={{
-                ...typeBtn,
-                background:
-                  form.tipoHerramienta === "CELULAR" ? "#2563eb" : "#fff",
-
-                color: form.tipoHerramienta === "CELULAR" ? "#fff" : "#111",
-              }}
+            <TypeBtn
+              active={form.tipoHerramienta === "CELULAR"}
               onClick={() =>
                 setForm({
                   ...form,
                   tipoHerramienta: "CELULAR",
                   laptopId: "",
+                  herramientaId: "",
                 })
               }
-            >
-              <Smartphone size={15} />
-              Celular
-            </button>
+              icon={<Smartphone size={15} />}
+              label="Celular"
+            />
 
-            <button
-              type="button"
-              style={{
-                ...typeBtn,
-                background:
-                  form.tipoHerramienta === "LAPTOP" ? "#2563eb" : "#fff",
-
-                color: form.tipoHerramienta === "LAPTOP" ? "#fff" : "#111",
-              }}
+            <TypeBtn
+              active={form.tipoHerramienta === "LAPTOP"}
               onClick={() =>
                 setForm({
                   ...form,
                   tipoHerramienta: "LAPTOP",
                   celularId: "",
+                  herramientaId: "",
                 })
               }
-            >
-              <Laptop size={15} />
-              Laptop
-            </button>
+              icon={<Laptop size={15} />}
+              label="Laptop"
+            />
+
+            <TypeBtn
+              active={form.tipoHerramienta === "HERRAMIENTA"}
+              onClick={() =>
+                setForm({
+                  ...form,
+                  tipoHerramienta: "HERRAMIENTA",
+                  celularId: "",
+                  laptopId: "",
+                })
+              }
+              icon={<Wrench size={15} />}
+              label="Herramienta"
+            />
           </div>
 
-          {/* EQUIPOS */}
-          {form.tipoHerramienta === "CELULAR" ? (
-            <>
-              <SelectInput
-                icon={<Smartphone size={14} />}
-                name="celularId"
-                value={form.celularId}
-                onChange={handleChange}
-              >
-                <option value="">Seleccionar celular</option>
-
-                {celulares.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.marca} {c.modelo}
-                  </option>
-                ))}
-              </SelectInput>
-
-              {/* INFO CELULAR */}
-              {selectedCelular && (
-                <div style={infoCard}>
-                  <div>
-                    <span style={infoLabel}>Marca</span>
-
-                    <div style={infoValue}>{selectedCelular.marca}</div>
-                  </div>
-
-                  <div>
-                    <span style={infoLabel}>Modelo</span>
-
-                    <div style={infoValue}>{selectedCelular.modelo}</div>
-                  </div>
-
-                  <div>
-                    <span style={infoLabel}>IMEI</span>
-
-                    <div style={infoValue}>{selectedCelular.imei}</div>
-                  </div>
-                </div>
-              )}
-            </>
-          ) : (
-            <>
-              <SelectInput
-                icon={<Laptop size={14} />}
-                name="laptopId"
-                value={form.laptopId}
-                onChange={handleChange}
-              >
-                <option value="">Seleccionar laptop</option>
-
-                {laptops.map((l) => (
-                  <option key={l.id} value={l.id}>
-                    {l.marca} {l.modelo}
-                  </option>
-                ))}
-              </SelectInput>
-
-              {/* INFO LAPTOP */}
-              {selectedLaptop && (
-                <div style={infoCard}>
-                  <div>
-                    <span style={infoLabel}>Marca</span>
-
-                    <div style={infoValue}>{selectedLaptop.marca}</div>
-                  </div>
-
-                  <div>
-                    <span style={infoLabel}>Modelo</span>
-
-                    <div style={infoValue}>{selectedLaptop.modelo}</div>
-                  </div>
-
-                  <div>
-                    <span style={infoLabel}>Serie</span>
-
-                    <div style={infoValue}>{selectedLaptop.serie}</div>
-                  </div>
-                </div>
-              )}
-            </>
+          {/* SELECTS */}
+          {form.tipoHerramienta === "CELULAR" && (
+            <SelectInput
+              icon={<Smartphone size={14} />}
+              name="celularId"
+              value={form.celularId}
+              onChange={handleChange}
+            >
+              <option value="">Celular</option>
+              {celulares.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.marca} {c.modelo}
+                </option>
+              ))}
+            </SelectInput>
           )}
 
-          {/* GUIA */}
+          {form.tipoHerramienta === "LAPTOP" && (
+            <SelectInput
+              icon={<Laptop size={14} />}
+              name="laptopId"
+              value={form.laptopId}
+              onChange={handleChange}
+            >
+              <option value="">Laptop</option>
+              {laptops.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.marca} {l.modelo}
+                </option>
+              ))}
+            </SelectInput>
+          )}
+
+          {form.tipoHerramienta === "HERRAMIENTA" && (
+            <SelectInput
+              icon={<Wrench size={14} />}
+              name="herramientaId"
+              value={form.herramientaId}
+              onChange={handleChange}
+            >
+              <option value="">Herramienta</option>
+              {herramientas.map((h) => (
+                <option key={h.id} value={h.id}>
+                  {h.descripcion}
+                </option>
+              ))}
+            </SelectInput>
+          )}
+
+          {/* INPUTS */}
           <Input
             icon={<FileText size={14} />}
-            placeholder="Número de guía"
             name="numeroGuia"
             value={form.numeroGuia}
             onChange={handleChange}
+            placeholder="Guía"
           />
 
-          {/* ZONA */}
           <Input
             icon={<MapPin size={14} />}
-            placeholder="Zona"
             name="zona"
             value={form.zona}
             onChange={handleChange}
+            placeholder="Zona"
           />
 
-          {/* OBS */}
           <textarea
-            placeholder="Observaciones..."
             name="observaciones"
             value={form.observaciones}
             onChange={handleChange}
             style={textareaStyle}
+            placeholder="Observaciones"
           />
         </div>
 
-        {/* FOOTER */}
         <div style={footerStyle}>
-          <button style={btnSecondaryStyle} onClick={onClose}>
+          <button onClick={onClose} style={btnSecondaryStyle}>
             Cancelar
           </button>
 
@@ -393,11 +293,10 @@ export default function CrearAsignacion({
             style={{
               ...btnPrimaryStyle,
               opacity: isValid ? 1 : 0.5,
-              cursor: isValid ? "pointer" : "not-allowed",
             }}
           >
             <ClipboardList size={15} />
-            Crear asignación
+            Crear
           </button>
         </div>
       </div>
@@ -405,45 +304,12 @@ export default function CrearAsignacion({
   );
 }
 
-/* =========================
-INPUT
-========================= */
-
-function Input({ icon, ...props }) {
-  return (
-    <div style={inputWrapStyle}>
-      <div style={iconStyle}>{icon}</div>
-
-      <input {...props} style={inputStyle} />
-    </div>
-  );
-}
-
-/* =========================
-SELECT
-========================= */
-
-function SelectInput({ icon, children, ...props }) {
-  return (
-    <div style={inputWrapStyle}>
-      <div style={iconStyle}>{icon}</div>
-
-      <select {...props} style={selectStyle}>
-        {children}
-      </select>
-    </div>
-  );
-}
-
-/* =========================
-ESTILOS
-========================= */
+/* ================= STYLES ================= */
 
 const overlayStyle = {
   position: "fixed",
   inset: 0,
-  background: "rgba(0,0,0,0.20)",
-  backdropFilter: "blur(5px)",
+  background: "rgba(0,0,0,0.2)",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
@@ -455,151 +321,93 @@ const modalStyle = {
   maxWidth: "620px",
   background: "#fff",
   borderRadius: "16px",
-  border: "1px solid #e2e8f0",
   overflow: "hidden",
-  position: "relative",
-  boxShadow: "0 30px 60px rgba(0,0,0,0.12)",
 };
 
 const closeBtnStyle = {
   position: "absolute",
-  top: "18px",
-  right: "18px",
-  border: "none",
+  right: 15,
+  top: 15,
   background: "transparent",
+  border: "none",
   cursor: "pointer",
-  color: "#64748b",
 };
 
-const headerStyle = {
-  padding: "28px 28px 18px",
-};
-
-const titleStyle = {
-  margin: 0,
-  fontSize: "22px",
-  fontWeight: "700",
-  color: "#0f172a",
-};
-
-const subtitleStyle = {
-  marginTop: "6px",
-  fontSize: "13px",
-  color: "#64748b",
-};
-
+const headerStyle = { padding: 20 };
+const titleStyle = { fontSize: 20, fontWeight: "bold" };
+const subtitleStyle = { fontSize: 13, color: "#666" };
 const formStyle = {
-  padding: "0 28px 28px",
+  padding: 20,
   display: "flex",
   flexDirection: "column",
-  gap: "14px",
+  gap: 12,
 };
+const rowStyle = { display: "flex", gap: 10 };
 
-const rowStyle = {
-  display: "flex",
-  gap: "10px",
-};
+const TypeBtn = ({ active, onClick, icon, label }) => (
+  <button
+    onClick={onClick}
+    style={{
+      flex: 1,
+      padding: 10,
+      borderRadius: 10,
+      border: "1px solid #ddd",
+      background: active ? "#2563eb" : "#fff",
+      color: active ? "#fff" : "#000",
+      display: "flex",
+      gap: 6,
+      justifyContent: "center",
+    }}
+  >
+    {icon}
+    {label}
+  </button>
+);
 
-const typeBtn = {
-  flex: 1,
-  border: "1px solid #dbe2ea",
-  borderRadius: "10px",
-  padding: "12px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: "8px",
-  cursor: "pointer",
-  fontWeight: "600",
-  transition: "0.15s ease",
-};
+function Input(props) {
+  return (
+    <input
+      {...props}
+      style={{ padding: 10, border: "1px solid #ddd", borderRadius: 8 }}
+    />
+  );
+}
 
-const inputWrapStyle = {
-  position: "relative",
-};
-
-const iconStyle = {
-  position: "absolute",
-  left: "14px",
-  top: "50%",
-  transform: "translateY(-50%)",
-  color: "#64748b",
-};
-
-const inputStyle = {
-  width: "100%",
-  padding: "12px 14px 12px 42px",
-  borderRadius: "10px",
-  border: "1px solid #dbe2ea",
-  fontSize: "13px",
-  outline: "none",
-  boxSizing: "border-box",
-};
-
-const selectStyle = {
-  ...inputStyle,
-  appearance: "none",
-  cursor: "pointer",
-};
+function SelectInput({ icon, children, ...props }) {
+  return (
+    <div>
+      {icon}
+      <select {...props} style={{ width: "100%", padding: 10 }}>
+        {children}
+      </select>
+    </div>
+  );
+}
 
 const textareaStyle = {
-  minHeight: "90px",
-  resize: "none",
-  borderRadius: "10px",
-  border: "1px solid #dbe2ea",
-  padding: "14px",
-  fontSize: "13px",
-  outline: "none",
-};
-
-const infoCard = {
-  background: "#f8fafc",
-  border: "1px solid #e2e8f0",
-  borderRadius: "10px",
-  padding: "14px",
-  display: "flex",
-  justifyContent: "space-between",
-  gap: "10px",
-};
-
-const infoLabel = {
-  fontSize: "11px",
-  color: "#64748b",
-};
-
-const infoValue = {
-  marginTop: "4px",
-  fontSize: "13px",
-  fontWeight: "600",
-  color: "#0f172a",
+  padding: 10,
+  borderRadius: 8,
+  border: "1px solid #ddd",
 };
 
 const footerStyle = {
-  padding: "18px 28px",
-  borderTop: "1px solid #f1f5f9",
+  padding: 20,
   display: "flex",
   justifyContent: "flex-end",
-  gap: "10px",
-  background: "#fcfcfc",
+  gap: 10,
 };
 
 const btnPrimaryStyle = {
-  border: "none",
   background: "#2563eb",
   color: "#fff",
-  padding: "11px 18px",
-  borderRadius: "10px",
-  display: "flex",
-  alignItems: "center",
-  gap: "8px",
-  fontWeight: "600",
+  border: "none",
+  padding: 10,
+  borderRadius: 8,
 };
 
 const btnSecondaryStyle = {
-  border: "1px solid #dbe2ea",
   background: "#fff",
-  color: "#334155",
-  padding: "11px 18px",
-  borderRadius: "10px",
-  cursor: "pointer",
+  border: "1px solid #ddd",
+  padding: 10,
+  borderRadius: 8,
 };
