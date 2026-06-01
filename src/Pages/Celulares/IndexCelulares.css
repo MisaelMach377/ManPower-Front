@@ -1,262 +1,346 @@
-/* celulares.css */
+/* VARIABLES GLOBALES DE DISEÑO PREMIUM (Paleta Experis/Manpower) */
+:root {
+  --experis-navy: #0A192F;       /* Azul ultra profundo institucional */
+  --experis-blue: #004B87;       /* Azul de marca para interacciones */
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-900: #0f172a;
+}
 
 .celulares-page {
   min-height: 100vh;
-  padding: 28px;
-  background: #f8fafc;
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  padding: 40px 24px;
+  background: #f4f6f9; /* Fondo gris claro para contrastar el card blanco */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 .celulares-container {
-  max-width: 1400px;
+  max-width: 1240px;
   margin: 0 auto;
 }
 
-.celulares-card {
-  background: #fff;
-  border-radius: 14px;
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.05),
-    0 1px 2px -1px rgba(0, 0, 0, 0.05);
+/* ==========================================================================
+   HERO HEADER PREMIUM
+   ========================================================================== */
+.page-header-premium {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  gap: 24px;
 }
 
-/* HEADER */
-
-.celulares-header {
-  padding: 18px 22px;
-  border-bottom: 1px solid #e2e8f0;
+.header-left-side {
+  flex: 1;
 }
 
-.celulares-title {
+.breadcrumb-tag {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--slate-400);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.page-header-premium h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--experis-navy);
+  letter-spacing: -0.03em;
+  margin: 0 0 2px 0;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: var(--slate-600);
+  margin: 0;
+}
+
+/* CONTENEDOR DE MÉTRICAS (Pills) */
+.header-stats-container {
   display: flex;
   align-items: center;
-  gap: 8px;
-
-  font-size: 18px;
-  font-weight: 700;
-  color: #0f172a;
+  background: #ffffff;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--slate-200);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
-/* FILTERS */
+.stat-pill {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 8px;
+}
+
+.stat-pill.separator {
+  width: 1px;
+  height: 24px;
+  background: var(--slate-200);
+  padding: 0;
+  margin: 0 12px;
+}
+
+.stat-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--slate-400);
+  letter-spacing: 0.02em;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--slate-900);
+  margin-top: -1px;
+}
+
+.stat-value.active-style { color: #16a34a; }
+.stat-value.repair-style { color: #d97706; }
+
+/* ==========================================================================
+   CONTENT CARD & FILTROS
+   ========================================================================== */
+.celulares-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--slate-200);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
 
 .celulares-filters {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-
-  padding: 16px 22px;
-
-  border-bottom: 1px solid #e2e8f0;
+  align-items: center;
+  padding: 20px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--slate-200);
 }
 
 .filters-left {
   display: flex;
+  gap: 12px;
   align-items: center;
-  gap: 10px;
 }
 
 .input-wrapper {
   position: relative;
-  display: flex;
-  align-items: center;
+}
+
+.input-system {
+  width: 240px;
+  padding: 10px 14px 10px 38px;
+  border: 1px solid var(--slate-200);
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 13px;
+  color: var(--slate-900);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.input-system:focus {
+  border-color: var(--experis-blue);
+  box-shadow: 0 0 0 3px rgba(0, 75, 135, 0.12);
 }
 
 .input-icon {
   position: absolute;
+  top: 50%;
   left: 12px;
-  color: #94a3b8;
-}
-
-.input-system {
-  min-width: 210px;
-
-  padding: 9px 12px 9px 36px;
-
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
-
-  background: #fff;
-
-  font-size: 13px;
-  color: #334155;
-
-  outline: none;
-  transition: all 0.15s ease;
-}
-
-.input-system:focus {
-  border-color: #cbd5e1;
-  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.15);
+  transform: translateY(-50%);
+  color: var(--slate-400);
+  pointer-events: none;
 }
 
 /* BOTONES */
-
-.btn-system {
+.btn-create, .btn-excel {
   display: flex;
   align-items: center;
-  gap: 6px;
-
-  padding: 9px 14px;
-
-  border-radius: 10px;
-  border: none;
-
-  cursor: pointer;
-
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
-
+  cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.btn-excel {
-  border: 1px solid #e2e8f0;
-  background: #fff;
-  color: #334155;
-}
-
-.btn-excel:hover {
-  background: #f1f5f9;
-}
-
 .btn-create {
-  background: #1e293b;
-  color: #fff;
+  border: none;
+  background: var(--experis-navy);
+  color: #ffffff;
 }
 
 .btn-create:hover {
-  background: #0f172a;
+  background: var(--experis-blue);
+  box-shadow: 0 4px 12px rgba(0, 75, 135, 0.2);
 }
 
-/* TABLA */
+.btn-excel {
+  border: 1px solid var(--slate-200);
+  background: #ffffff;
+  color: var(--slate-700);
+}
 
+.btn-excel:hover {
+  background: var(--slate-50);
+  border-color: var(--slate-300);
+}
+
+.btn-excel svg { color: #10b981; }
+
+/* ==========================================================================
+   SECCIÓN TABLA
+   ========================================================================== */
 .table-wrapper {
-  padding: 0 10px 10px;
   overflow-x: auto;
+  background: #ffffff;
 }
 
 .celulares-table {
   width: 100%;
   border-collapse: collapse;
+  text-align: left;
 }
 
 .celulares-table th {
-  padding: 14px 12px;
-
-  text-align: left;
-
+  padding: 14px 20px;
   font-size: 11px;
-  font-weight: 700;
-
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-
-  color: #64748b;
-
-  border-bottom: 1px solid #e2e8f0;
+  letter-spacing: 0.05em;
+  color: var(--slate-600);
+  background: var(--slate-50);
+  border-bottom: 1px solid var(--slate-200);
 }
 
 .celulares-table td {
-  padding: 14px 12px;
-
-  font-size: 13px;
-  color: #334155;
-
-  border-bottom: 1px solid #f1f5f9;
+  padding: 16px 20px;
+  font-size: 13.5px;
+  border-bottom: 1px solid var(--slate-100);
+  vertical-align: middle;
 }
 
-/* BADGES */
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-
-  padding: 5px 10px;
-
-  border-radius: 999px;
-
-  font-size: 12px;
-  font-weight: 700;
+.celulares-table tbody tr:hover {
+  background-color: rgba(248, 250, 252, 0.8);
 }
 
-.badge-activo {
-  background: #dcfce7;
-  color: #15803d;
-}
-
-.badge-inactivo {
-  background: #fee2e2;
-  color: #dc2626;
-}
-
-.badge-reparacion {
-  background: #fef9c3;
-  color: #ca8a04;
-}
-
-.badge-perdido {
-  background: #dbeafe;
-  color: #2563eb;
-}
-
-.badge-asignacion {
-  background: #e0f2fe;
-  color: #0369a1;
-}
-
-.badge-devolucion {
-  background: #f3e8ff;
-  color: #7c3aed;
-}
-
-.badge-cambio {
-  background: #fef3c7;
-  color: #b45309;
-}
-
-.badge-baja {
-  background: #fee2e2;
-  color: #b91c1c;
-}
-
-/* ACCIONES */
-
-.actions {
+/* CELDA CON ICONO DE SMARTPHONE */
+.phone-device-cell {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
 }
 
-.icon-btn {
-  border: none;
-  background: transparent;
-
+.phone-avatar {
   width: 32px;
   height: 32px;
-
-  border-radius: 8px;
-
+  border-radius: 50%;
+  background: rgba(0, 75, 135, 0.06);
+  color: var(--experis-blue);
   display: flex;
   align-items: center;
   justify-content: center;
+}
 
+/* UTILIDADES */
+.font-medium { font-weight: 500; color: var(--slate-900); }
+.font-mono { font-family: monospace; font-size: 12px; }
+.text-secondary { color: var(--slate-700); }
+.text-sub { font-size: 11.5px; color: var(--slate-400); margin-top: 2px; }
+.text-right { text-align: right; }
+.justify-end { justify-content: flex-end; }
+
+/* BADGES DE ESTADO Y OPERACIÓN */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge-activo { background: #e6f7ed; color: #15803d; }
+.badge-inactivo { background: #fef2f2; color: #b91c1c; }
+.badge-reparacion { background: #fffbeb; color: #b45309; }
+.badge-perdido { background: #f1f5f9; color: #475569; }
+
+.badge-asignacion { background: #e0f2fe; color: #0369a1; }
+.badge-devolucion { background: #f3e8ff; color: #7c3aed; }
+.badge-cambio { background: #fef3c7; color: #d97706; }
+.badge-baja { background: #fee2e2; color: #b91c1c; }
+
+/* ACCIONES */
+.acciones { display: flex; gap: 4px; }
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  color: var(--slate-600);
   cursor: pointer;
-
   transition: all 0.15s ease;
 }
 
 .icon-btn:hover {
-  background: #e2e8f0;
-  transform: scale(1.08);
+  background: var(--slate-100);
+  color: var(--slate-900);
 }
 
 .icon-btn.delete:hover {
-  background: #fee2e2;
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+/* LOADING & EMPTY STATES */
+.table-state-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--slate-400);
+  font-size: 13.5px;
+  gap: 12px;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  color: var(--experis-blue);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .page-header-premium {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .header-stats-container {
+    width: 100%;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
 }
