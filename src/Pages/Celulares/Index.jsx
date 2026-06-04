@@ -8,6 +8,7 @@ import {
   FileSpreadsheet,
   ShieldCheck,
   Loader2,
+  Upload,
 } from "lucide-react";
 
 import "./IndexCelulares.css";
@@ -31,10 +32,19 @@ export default function Celulares() {
   const [fMarca, setFMarca] = useState("");
   const [fEstado, setFEstado] = useState("");
 
+  //IMPORTAR
+  const [importing, setImporting] = useState(false);
+
+  // PAGINACIÓN
+  const [paginaActual, setPaginaActual] = useState(1);
+  const registrosPorPagina = 25;
+
+  // FETCH INICIAL DE CELULARES
   useEffect(() => {
     obtenerCelulares();
   }, []);
 
+  // OBTENER CELULARES DESDE LA API
   const obtenerCelulares = async () => {
     try {
       setLoading(true);
@@ -48,6 +58,39 @@ export default function Celulares() {
     }
   };
 
+  //IMPORTAR EXCEL
+  const importarExcel = async (file) => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      setImporting(true);
+
+      const res = await fetch(
+        "https://localhost:44382/api/CelularesApi/import/excel",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      const data = await res.json();
+
+      alert(
+        `Importación lista 🔥\nInsertados: ${data.insertados}\nErrores: ${data.errores?.length || 0}`,
+      );
+
+      obtenerCelulares();
+    } catch (err) {
+      console.error("Error importando Excel:", err);
+    } finally {
+      setImporting(false);
+    }
+  };
+
+  // FILTRADO DINÁMICO DE CELULARES
   const filtrados = celulares.filter((c) => {
     return (
       (c.marca?.toLowerCase() || "").includes(fMarca.toLowerCase()) &&
@@ -56,6 +99,14 @@ export default function Celulares() {
       )
     );
   });
+
+  //PAGINACION FETCH
+  const indiceUltimo = paginaActual * registrosPorPagina;
+  const indicePrimero = indiceUltimo - registrosPorPagina;
+
+  const celularesPagina = filtrados.slice(indicePrimero, indiceUltimo);
+
+  const totalPaginas = Math.ceil(filtrados.length / registrosPorPagina);
 
   const exportarExcel = () => {
     window.open(
@@ -66,22 +117,23 @@ export default function Celulares() {
 
   const estadoClass = (estado) => {
     const map = {
-      Activo: "badge badge-activo",
-      Inactivo: "badge badge-inactivo",
-      Reparación: "badge badge-reparacion",
-      Perdido: "badge badge-perdido",
+      ASIGNADO: "badge badge-asignado",
+      AVERIADO: "badge badge-averiado",
+      "DE BAJA": "badge badge-baja-equipo",
+      DISPONIBLE: "badge badge-disponible",
+      ROBADO: "badge badge-robado",
     };
-    return map[estado] || "badge";
+    return map[estado?.toUpperCase()] || "badge badge-otro-estado";
   };
 
   const operacionClass = (op) => {
     const map = {
-      Asignación: "badge badge-asignacion",
-      Devolución: "badge badge-devolucion",
-      Cambio: "badge badge-cambio",
-      Baja: "badge badge-baja",
+      CLARO: "badge badge-claro",
+      MOVISTAR: "badge badge-movistar",
+      ENTEL: "badge badge-entel",
+      REPOSICION: "badge badge-reposicion",
     };
-    return map[op] || "badge";
+    return map[op?.toUpperCase()] || "badge badge-operador";
   };
 
   // CÁLCULOS DINÁMICOS PARA LAS MÉTRICAS DEL HERO HEADER
@@ -126,10 +178,30 @@ export default function Celulares() {
           )}
 
           <div className="header-right-side">
-            <button className="btn-create" onClick={() => setOpenModal(true)}>
-              <Plus size={16} />
-              Nuevo Celular
-            </button>
+            <div className="header-actions">
+              {/* IMPORT */}
+              <button
+                className="btn-import"
+                onClick={() => document.getElementById("excelInput").click()}
+                title="Importar Excel"
+                disabled={importing}
+              >
+                {importing ? (
+                  <>
+                    <Loader2 size={16} className="spinner" />
+                    Importando...
+                  </>
+                ) : (
+                  <Upload size={16} />
+                )}
+              </button>
+
+              {/* CREATE */}
+              <button className="btn-create" onClick={() => setOpenModal(true)}>
+                <Plus size={16} />
+                Nuevo Celular
+              </button>
+            </div>
           </div>
         </div>
 
@@ -145,7 +217,10 @@ export default function Celulares() {
                   className="input-system"
                   placeholder="Buscar por marca..."
                   value={fMarca}
-                  onChange={(e) => setFMarca(e.target.value)}
+                  onChange={(e) => {
+                    setFMarca(e.target.value);
+                    setPaginaActual(1);
+                  }}
                 />
               </div>
 
@@ -156,7 +231,10 @@ export default function Celulares() {
                   className="input-system"
                   placeholder="Filtrar por estado..."
                   value={fEstado}
-                  onChange={(e) => setFEstado(e.target.value)}
+                  onChange={(e) => {
+                    setFEstado(e.target.value);
+                    setPaginaActual(1);
+                  }}
                 />
               </div>
             </div>
@@ -186,9 +264,9 @@ export default function Celulares() {
                 <thead>
                   <tr>
                     <th>Marca / Modelo</th>
-                    <th>IMEI del Terminal</th>
+                    <th>IMEI </th>
+                    <th>Operacion</th>
                     <th>N° Celular</th>
-                    <th>Última Operación</th>
                     <th>Proveedor</th>
                     <th>Estado</th>
                     <th className="text-right">Acciones</th>
@@ -196,7 +274,7 @@ export default function Celulares() {
                 </thead>
 
                 <tbody>
-                  {filtrados.map((c) => (
+                  {celularesPagina.map((c) => (
                     <tr key={c.id}>
                       <td>
                         <div className="phone-device-cell">
@@ -214,17 +292,21 @@ export default function Celulares() {
                           {c.imei}
                         </span>
                       </td>
-                      <td>
-                        <span className="text-secondary">{c.celular}</span>
-                      </td>
+
                       <td>
                         <span className={operacionClass(c.operacion)}>
                           {c.operacion}
                         </span>
                       </td>
+
+                      <td>
+                        <span className="text-secondary">{c.celular}</span>
+                      </td>
+
                       <td>
                         <span className="text-secondary">{c.proveedor}</span>
                       </td>
+
                       <td>
                         <span className={estadoClass(c.estado)}>
                           {c.estado}
@@ -281,6 +363,36 @@ export default function Celulares() {
         celular={celularDelete}
         onDeleted={obtenerCelulares}
       />
+
+      <input
+        type="file"
+        id="excelInput"
+        accept=".xlsx,.xls"
+        style={{ display: "none" }}
+        onChange={(e) => importarExcel(e.target.files[0])}
+      />
+
+      {totalPaginas > 1 && (
+        <div className="pagination">
+          <button
+            disabled={paginaActual === 1}
+            onClick={() => setPaginaActual((p) => p - 1)}
+          >
+            Anterior
+          </button>
+
+          <span className="pagination-info">
+            Página {paginaActual} de {totalPaginas}
+          </span>
+
+          <button
+            disabled={paginaActual === totalPaginas}
+            onClick={() => setPaginaActual((p) => p + 1)}
+          >
+            Siguiente
+          </button>
+        </div>
+      )}
     </div>
   );
 }

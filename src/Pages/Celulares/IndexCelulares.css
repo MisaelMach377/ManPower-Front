@@ -344,3 +344,185 @@
     box-sizing: border-box;
   }
 }
+
+/* ==========================
+   HEADER ACTIONS (IMPORT + CREATE)
+   ========================== */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* BOTÓN IMPORT estilo SaaS */
+.btn-import {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--slate-200);
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--slate-600);
+  transition: all 0.15s ease;
+}
+
+.btn-import:hover {
+  background: var(--slate-50);
+  border-color: var(--slate-300);
+  color: var(--experis-blue);
+  transform: translateY(-1px);
+}
+
+.btn-import:active {
+  transform: translateY(0);
+}
+
+.btn-import:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* BAGDE BASE */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+/* BAGDE CLARO */
+
+.badge-claro {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+/* BAGDE MOVISTAR */
+
+.badge-movistar {
+  background: rgba(14, 165, 233, 0.12);
+  color: #0284c7;
+  border: 1px solid rgba(14, 165, 233, 0.25);
+}
+
+/* BAGDE ENTEL */
+
+.badge-entel {
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+}
+
+/* BAGDE REPOSICION */
+
+.badge-reposicion {
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+/* BAGDE OTRO OPERADOR */
+
+.badge-operador {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+/* =====================================
+   ESTADOS DE EQUIPO
+===================================== */
+
+.badge-asignado {
+  background: rgba(59, 130, 246, 0.15);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.badge-averiado {
+  background: rgba(139, 92, 246, 0.15);
+  color: #7c3aed;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+}
+
+.badge-baja-equipo {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.badge-disponible {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.badge-robado {
+  background: rgba(127, 29, 29, 0.18);
+  color: #991b1b;
+  border: 1px solid rgba(127, 29, 29, 0.35);
+  font-weight: 700;
+}
+
+.badge-otro-estado {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+/* ==========================
+   PAGINACIÓN PREMIUM
+   ========================== */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 22px;
+  border-top: 1px solid var(--slate-200);
+  background: #fff;
+}
+
+.pagination button {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--slate-600);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: var(--slate-100);
+  color: var(--experis-navy);
+  transform: translateY(-1px);
+}
+
+.pagination button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.pagination button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--slate-600);
+  min-width: 120px;
+  text-align: center;
+}

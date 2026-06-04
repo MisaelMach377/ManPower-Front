@@ -7,6 +7,7 @@ import {
   Hash,
   FileSpreadsheet,
   Loader2,
+  Upload,
 } from "lucide-react";
 
 import "./Index.css";
@@ -165,10 +166,10 @@ export default function Usuarios() {
                 {importing ? (
                   <>
                     <Loader2 size={16} className="spinner" />
-                    Exportando...
+                    Importando...
                   </>
                 ) : (
-                  <FileSpreadsheet size={16} />
+                  <Upload size={16} />
                 )}
               </button>
               <button className="btn-create" onClick={() => setOpenModal(true)}>

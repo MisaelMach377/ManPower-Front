@@ -95,13 +95,32 @@ export default function CrearCelular({ open, onClose, onCreated }) {
 
         <div className="crear-celular-inner">
           <div className="crear-celular-form">
-            <Input
-              icon={<Smartphone size={14} />}
-              name="marca"
-              placeholder="Marca"
-              value={form.marca}
-              onChange={handleChange}
-            />
+            <div className="input-group">
+              <label>Marca</label>
+
+              <div className="input-with-icon">
+                <Smartphone size={14} className="input-icon" />
+
+                <select
+                  name="marca"
+                  value={form.marca}
+                  onChange={handleChange}
+                  className="input-system"
+                  required
+                >
+                  <option value="">Seleccionar marca</option>
+
+                  <option value="HONOR">HONOR</option>
+                  <option value="HUAWEI">HUAWEI</option>
+                  <option value="MOTOROLA">MOTOROLA</option>
+                  <option value="OPPO">OPPO</option>
+                  <option value="REDMI">REDMI</option>
+                  <option value="SAMSUNG">SAMSUNG</option>
+                  <option value="ZTE">ZTE</option>
+                  <option value="XIAOMI">XIAOMI</option>
+                </select>
+              </div>
+            </div>
 
             <Input
               icon={<Package size={14} />}
