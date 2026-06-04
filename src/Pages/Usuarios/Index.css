@@ -375,3 +375,94 @@
     justify-content: flex-end;
   }
 }
+/* RESPONSIVE PARA LA SECCIÓN DE FILTROS */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* BOTÓN IMPORT minimalista */
+.btn-import {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--slate-200);
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--slate-600);
+  transition: all 0.15s ease;
+}
+
+.btn-import:hover {
+  background: var(--slate-50);
+  border-color: var(--slate-300);
+  color: var(--experis-blue);
+  transform: translateY(-1px);
+}
+
+.btn-import:active {
+  transform: translateY(0px);
+}
+.btn-import:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-import:disabled:hover {
+  background: #ffffff;
+  color: var(--slate-600);
+}
+
+/* ==========================
+   PAGINACIÓN PREMIUM
+   ========================== */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 22px;
+  border-top: 1px solid var(--slate-200);
+  background: #fff;
+}
+
+.pagination button {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--slate-600);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: var(--slate-100);
+  color: var(--experis-navy);
+  transform: translateY(-1px);
+}
+
+.pagination button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.pagination button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--slate-600);
+  min-width: 120px;
+  text-align: center;
+}

@@ -15,7 +15,7 @@ import "./CrearHerramienta.css";
 export default function CrearHerramienta({ open, onClose, onCreated }) {
   const [form, setForm] = useState({
     descripcion: "",
-    unidadMedida: "Unid",
+    unidadMedida: "",
     familia: "",
     stock: "",
     precio: "",
@@ -81,7 +81,7 @@ export default function CrearHerramienta({ open, onClose, onCreated }) {
       // Reset idéntico al de usuarios
       setForm({
         descripcion: "",
-        unidadMedida: "Unid",
+        unidadMedida: "UND",
         familia: "",
         stock: "",
         precio: "",
@@ -130,22 +130,50 @@ export default function CrearHerramienta({ open, onClose, onCreated }) {
 
           {/* Fila Doble: Familia y Categoría */}
           <div className="pro-form-grid col-2">
-            <InputField
-              icon={<Layers size={13} />}
-              name="familia"
-              placeholder="Familia / Grupo"
-              value={form.familia}
-              onChange={handleChange}
-              disabled={isSubmitting}
-            />
-            <InputField
-              icon={<Package size={13} />}
-              name="categoria"
-              placeholder="Categoría"
-              value={form.categoria}
-              onChange={handleChange}
-              disabled={isSubmitting}
-            />
+            <div className="pro-input-wrapper">
+              <div className="pro-input-icon">
+                <Layers size={13} />
+              </div>
+
+              <select
+                name="familia"
+                value={form.familia}
+                onChange={handleChange}
+                disabled={isSubmitting}
+                className="pro-select"
+              >
+                <option value="">Seleccione familia</option>
+                <option value="MANUAL">MANUAL</option>
+                <option value="MEDICION">MEDICION</option>
+              </select>
+
+              <div className="pro-select-chevron" />
+            </div>
+
+            <div className="pro-input-wrapper">
+              <div className="pro-input-icon">
+                <Package size={13} />
+              </div>
+
+              <select
+                name="categoria"
+                value={form.categoria}
+                onChange={handleChange}
+                disabled={isSubmitting}
+                className="pro-select"
+              >
+                <option value="">Seleccione categoría</option>
+                <option value="AIRE ACONDICIONADO">AIRE ACONDICIONADO</option>
+                <option value="ELECTRICO">ELECTRICO</option>
+                <option value="HERRAMIENTA">HERRAMIENTA</option>
+                <option value="KIT DE ALTURA">KIT DE ALTURA</option>
+                <option value="MEDICION">MEDICION</option>
+                <option value="RADIO TRANSMISIONES">RADIO TRANSMISIONES</option>
+                <option value="TECNOLOGIA">TECNOLOGIA</option>
+              </select>
+
+              <div className="pro-select-chevron" />
+            </div>
           </div>
 
           {/* Fila Especial: Unidad de Medida (Dropdown) y Stock */}
@@ -161,10 +189,11 @@ export default function CrearHerramienta({ open, onClose, onCreated }) {
                 className="pro-select"
                 disabled={isSubmitting}
               >
-                <option value="Unid">UNID</option>
-                <option value="Metros">METROS</option>
-                <option value="Cajas">CAJAS</option>
-                <option value="Global">GLOBAL</option>
+                <option value="">Medida</option>
+                <option value="UND">UND</option>
+                <option value="PZA">PZA</option>
+                <option value="JGO">JGO</option>
+                <option value="EQP">EQP</option>
               </select>
               <div className="pro-select-chevron" />
             </div>

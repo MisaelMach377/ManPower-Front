@@ -29,11 +29,50 @@ export default function Usuarios() {
   // FILTROS
   const [fApellido, setFApellido] = useState("");
   const [fDoc, setFDoc] = useState("");
+  //IMPORTAR EXCEL
+  const [importing, setImporting] = useState(false);
+  // PAGINACIÓN
+  const [paginaActual, setPaginaActual] = useState(1);
+  const registrosPorPagina = 25;
 
+  //OBETENER IMPORTAR EXCEL
+  const importarExcel = async (file) => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      setImporting(true);
+
+      const res = await fetch(
+        "https://localhost:44382/api/UsuariosApi/import/excel",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      const data = await res.json();
+
+      alert(
+        `Importación lista 🔥\nInsertados: ${data.insertados}\nErrores: ${data.errores?.length || 0}`,
+      );
+
+      obtenerUsuarios();
+    } catch (err) {
+      console.error("Error importando Excel:", err);
+    } finally {
+      setImporting(false);
+    }
+  };
+
+  //obtener usuarios
   useEffect(() => {
     obtenerUsuarios();
   }, []);
 
+  //FETCH USUARIOS
   const obtenerUsuarios = async () => {
     try {
       setLoading(true);
@@ -55,12 +94,19 @@ export default function Usuarios() {
     return `${day}/${month}/${d.getFullYear()}`;
   };
 
+  // FILTRADO DINÁMICO
   const filtrados = usuarios.filter((u) => {
     return (
       (u.apellido?.toLowerCase() || "").includes(fApellido.toLowerCase()) &&
       (u.numeroDocumento?.toLowerCase() || "").includes(fDoc.toLowerCase())
     );
   });
+
+  //PAGINACION
+  const indiceUltimo = paginaActual * registrosPorPagina;
+  const indicePrimero = indiceUltimo - registrosPorPagina;
+  const usuariosPagina = filtrados.slice(indicePrimero, indiceUltimo);
+  const totalPaginas = Math.ceil(filtrados.length / registrosPorPagina);
 
   const exportarExcel = () => {
     window.open(
@@ -109,10 +155,27 @@ export default function Usuarios() {
           )}
 
           <div className="header-right-side">
-            <button className="btn-create" onClick={() => setOpenModal(true)}>
-              <Plus size={16} />
-              Nuevo Usuario
-            </button>
+            <div className="header-actions">
+              <button
+                className="btn-import"
+                onClick={() => document.getElementById("excelInput").click()}
+                title="Importar Excel"
+                disabled={importing}
+              >
+                {importing ? (
+                  <>
+                    <Loader2 size={16} className="spinner" />
+                    Exportando...
+                  </>
+                ) : (
+                  <FileSpreadsheet size={16} />
+                )}
+              </button>
+              <button className="btn-create" onClick={() => setOpenModal(true)}>
+                <Plus size={16} />
+                Nuevo Usuario
+              </button>
+            </div>
           </div>
         </div>
 
@@ -126,7 +189,10 @@ export default function Usuarios() {
                   type="text"
                   placeholder="Buscar por apellido..."
                   value={fApellido}
-                  onChange={(e) => setFApellido(e.target.value)}
+                  onChange={(e) => {
+                    setFApellido(e.target.value);
+                    setPaginaActual(1);
+                  }}
                 />
               </div>
 
@@ -136,7 +202,10 @@ export default function Usuarios() {
                   type="text"
                   placeholder="N° de Documento..."
                   value={fDoc}
-                  onChange={(e) => setFDoc(e.target.value)}
+                  onChange={(e) => {
+                    setFDoc(e.target.value);
+                    setPaginaActual(1);
+                  }}
                 />
               </div>
             </div>
@@ -173,7 +242,7 @@ export default function Usuarios() {
                 </thead>
 
                 <tbody>
-                  {filtrados.map((u) => (
+                  {usuariosPagina.map((u) => (
                     <tr key={u.id}>
                       <td>
                         <div className="user-name-cell">
@@ -244,6 +313,27 @@ export default function Usuarios() {
               </table>
             )}
           </div>
+          {totalPaginas > 1 && (
+            <div className="pagination">
+              <button
+                disabled={paginaActual === 1}
+                onClick={() => setPaginaActual((p) => p - 1)}
+              >
+                Anterior
+              </button>
+
+              <span className="pagination-info">
+                Página {paginaActual} de {totalPaginas}
+              </span>
+
+              <button
+                disabled={paginaActual === totalPaginas}
+                onClick={() => setPaginaActual((p) => p + 1)}
+              >
+                Siguiente
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -264,6 +354,14 @@ export default function Usuarios() {
         onClose={() => setOpenDelete(false)}
         usuario={usuarioDelete}
         onDeleted={obtenerUsuarios}
+      />
+
+      <input
+        type="file"
+        id="excelInput"
+        accept=".xlsx,.xls"
+        style={{ display: "none" }}
+        onChange={(e) => importarExcel(e.target.files[0])}
       />
     </div>
   );

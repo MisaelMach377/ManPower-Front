@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Plus,
   Pencil,
@@ -7,6 +7,7 @@ import {
   Package,
   FileSpreadsheet,
   Loader2,
+  Upload,
 } from "lucide-react";
 
 import "./IndexHerramientas.css";
@@ -18,6 +19,10 @@ import EliminarHerramienta from "./EliminarHerramienta";
 export default function Herramientas() {
   const [herramientas, setHerramientas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [importing, setImporting] = useState(false);
+  //PAGINACION
+  const [paginaActual, setPaginaActual] = useState(1);
+  const registrosPorPagina = 25;
 
   // MODALS
   const [openModal, setOpenModal] = useState(false);
@@ -30,6 +35,14 @@ export default function Herramientas() {
   const [fDescripcion, setFDescripcion] = useState("");
   const [fCategoria, setFCategoria] = useState("");
 
+  //IMPORTAR EXCEL
+  const fileInputRef = useRef(null);
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  //Obtener herramientas al cargar la página
   useEffect(() => {
     obtenerHerramientas();
   }, []);
@@ -47,6 +60,48 @@ export default function Herramientas() {
     }
   };
 
+  //importar excel
+  const handleImportExcel = async (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      setImporting(true);
+
+      const res = await fetch(
+        "https://localhost:44382/api/HerramientasApi/import/excel",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message);
+        return;
+      }
+
+      alert(
+        `Importación completada 🔥\nInsertados: ${data.insertados}\nErrores: ${data.errores?.length || 0}`,
+      );
+
+      obtenerHerramientas();
+    } catch (error) {
+      console.error(error);
+      alert("Error al importar Excel");
+    } finally {
+      setImporting(false);
+      e.target.value = "";
+    }
+  };
+
+  //filtrros
   const filtrados = herramientas.filter((h) => {
     return (
       (h.descripcion?.toLowerCase() || "").includes(
@@ -54,6 +109,14 @@ export default function Herramientas() {
       ) && (h.categoria?.toLowerCase() || "").includes(fCategoria.toLowerCase())
     );
   });
+
+  //Paginacion
+  const indiceUltimo = paginaActual * registrosPorPagina;
+  const indicePrimero = indiceUltimo - registrosPorPagina;
+
+  const herramientasPagina = filtrados.slice(indicePrimero, indiceUltimo);
+
+  const totalPaginas = Math.ceil(filtrados.length / registrosPorPagina);
 
   const exportarExcel = () => {
     window.open(
@@ -73,7 +136,7 @@ export default function Herramientas() {
         {/* HEADER OPTIMIZADO STYLE PREMIUM ENTERPRISE */}
         <div className="page-header-premium">
           <div className="header-left-side">
-            <div className="breadcrumb-tag">Experis System / Inventario</div>
+            <div className="breadcrumb-tag">Experis System / Herramientas</div>
             <h1>Gestión de Herramientas</h1>
             <p className="page-subtitle">
               Administra el stock, unidades de medida y estados de herramientas
@@ -102,10 +165,33 @@ export default function Herramientas() {
           )}
 
           <div className="header-right-side">
-            <button className="btn-create" onClick={() => setOpenModal(true)}>
-              <Plus size={16} />
-              Nueva Herramienta
-            </button>
+            <div className="header-actions">
+              <button
+                className="btn-import"
+                onClick={handleImportClick}
+                disabled={importing}
+                title="Importar Excel"
+              >
+                {importing ? (
+                  <Loader2 size={16} className="spinner" />
+                ) : (
+                  <Upload size={16} />
+                )}
+              </button>
+
+              <button className="btn-create" onClick={() => setOpenModal(true)}>
+                <Plus size={16} />
+                Nueva Herramienta
+              </button>
+            </div>
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept=".xlsx,.xls"
+              style={{ display: "none" }}
+              onChange={handleImportExcel}
+            />
           </div>
         </div>
 
@@ -119,7 +205,10 @@ export default function Herramientas() {
                   type="text"
                   placeholder="Buscar por descripción..."
                   value={fDescripcion}
-                  onChange={(e) => setFDescripcion(e.target.value)}
+                  onChange={(e) => {
+                    setFDescripcion(e.target.value);
+                    setPaginaActual(1);
+                  }}
                 />
               </div>
 
@@ -129,7 +218,10 @@ export default function Herramientas() {
                   type="text"
                   placeholder="Categoría..."
                   value={fCategoria}
-                  onChange={(e) => setFCategoria(e.target.value)}
+                  onChange={(e) => {
+                    setFCategoria(e.target.value);
+                    setPaginaActual(1);
+                  }}
                 />
               </div>
             </div>
@@ -169,7 +261,7 @@ export default function Herramientas() {
                 </thead>
 
                 <tbody>
-                  {filtrados.map((h) => (
+                  {herramientasPagina.map((h) => (
                     <tr key={h.id}>
                       <td>
                         <div className="tool-name-cell">
@@ -242,6 +334,28 @@ export default function Herramientas() {
               </table>
             )}
           </div>
+
+          {totalPaginas > 1 && (
+            <div className="pagination">
+              <button
+                disabled={paginaActual === 1}
+                onClick={() => setPaginaActual((p) => p - 1)}
+              >
+                Anterior
+              </button>
+
+              <span className="pagination-info">
+                Página {paginaActual} de {totalPaginas}
+              </span>
+
+              <button
+                disabled={paginaActual === totalPaginas}
+                onClick={() => setPaginaActual((p) => p + 1)}
+              >
+                Siguiente
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

@@ -97,7 +97,7 @@ export default function Celulares() {
         {/* HERO HEADER OPTIMIZADO STYLE PREMIUM ENTERPRISE */}
         <div className="page-header-premium">
           <div className="header-left-side">
-            <div className="breadcrumb-tag">Experis System / Inventario</div>
+            <div className="breadcrumb-tag">Experis System / CELULARES</div>
             <h1>Control de Celulares</h1>
             <p className="page-subtitle">
               Monitorea el inventario de dispositivos móviles, asignaciones
